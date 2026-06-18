@@ -8,7 +8,7 @@ export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const handleSignOut = async () => {
-        console.log('Signout'); 
+        console.log('Signout');
     }
 
     const navLinks = [
@@ -67,14 +67,14 @@ export default function Navbar() {
                                 Sign In
                             </Link>
 
-                            <Button
-                                as={Link}
-                                href="/register"
-                                radius="lg"
-                                className="h-11 bg-white px-6 text-sm font-semibold text-black hover:bg-gray-200 rounded-3xl"
-                            >
-                                Get Started
-                            </Button>
+                            <Link href="/auth/signup" passHref>
+                                <Button
+                                    radius="lg"
+                                    className="h-11 bg-white px-6 text-sm font-semibold text-black hover:bg-gray-200 rounded-3xl"
+                                >
+                                    Get Started
+                                </Button>
+                            </Link>
                         </div>
                     </div>
 
@@ -142,7 +142,7 @@ export default function Navbar() {
                         <div className="border-t border-white/10 pt-4">
                             <div className="flex flex-col gap-3">
                                 <Link
-                                    href="/login"
+                                    href="/auth/signin"
                                     className="rounded-xl px-4 py-3 text-base font-medium text-violet-400 transition hover:bg-white/5"
                                     onClick={() => setIsMenuOpen(false)}
                                 >
@@ -151,7 +151,7 @@ export default function Navbar() {
 
                                 <Button
                                     as={Link}
-                                    href="/register"
+                                    href="/auth/signup"
                                     className="bg-white font-semibold text-black"
                                     radius="lg"
                                 >
