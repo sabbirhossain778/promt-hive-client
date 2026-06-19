@@ -2,13 +2,17 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@heroui/react";
+import { signOut, useSession } from "@/lib/auth-client";
 
 
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { data: session, isPending } = useSession();
+    const user = session?.user;
+    // console.log('Session:', session, 'Pending:', isPending);
 
     const handleSignOut = async () => {
-        console.log('Signout');
+        await signOut();
     }
 
     const navLinks = [
@@ -59,23 +63,37 @@ export default function Navbar() {
                         {/* Vertical Divider */}
                         <div className="h-6 w-px bg-white/20" />
 
-                        {/* Auth Links */}
-                        <div className="flex items-center gap-4">
-                            <Link
-                                href="/auth/signin"
-                                className="text-sm font-medium text-violet-400 transition hover:text-violet-300">
-                                Sign In
-                            </Link>
+                        {/* User Info or  */}
+                        { user ?
+                            <div className="flex items-center gap-4">
+                                <span className="text-md font-medium text-gray-300">
+                                    Welcome, {user.name} !
+                                </span>
+                                <button
+                                    onClick={handleSignOut}
+                                    className="group relative flex h-10 w-32 items-center justify-center overflow-hidden rounded-full border border-red-500/30 bg-transparent text-sm font-semibold text-red-500 transition-colors duration-500 hover:border-transparent hover:text-white z-10">
+                                    <div className="absolute left-0 top-0 -z-10 h-full w-0 bg-gradient-to-r from-red-500 to-red-800 transition-all duration-500 ease-out group-hover:w-full"></div>
 
-                            <Link href="/auth/signup" passHref>
-                                <Button
-                                    radius="lg"
-                                    className="h-11 bg-white px-6 text-sm font-semibold text-black hover:bg-gray-200 rounded-3xl"
-                                >
-                                    Get Started
-                                </Button>
-                            </Link>
-                        </div>
+                                    Sign Out
+                                </button>
+                            </div> :
+                            <div className="flex items-center gap-4">
+                                <Link
+                                    href="/auth/signin"
+                                    className="text-sm font-medium text-violet-400 transition hover:text-violet-300">
+                                    Sign In
+                                </Link>
+
+                                <Link href="/auth/signup" passHref>
+                                    <Button
+                                        radius="lg"
+                                        className="h-11 bg-white px-6 text-sm font-semibold text-black hover:bg-gray-200 rounded-3xl"
+                                    >
+                                        Get Started
+                                    </Button>
+                                </Link>
+                            </div>
+                        }
                     </div>
 
                     {/* MOBILE MENU BUTTON */}

@@ -31,7 +31,7 @@ export default function SignInPage() {
             const { error: authError } = await authClient.signIn.email({
                 email,
                 password,
-                callbackURL: "/dashboard"
+                callbackURL: "/"
             });
 
             if (authError) {
