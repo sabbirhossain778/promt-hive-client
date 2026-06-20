@@ -14,16 +14,15 @@ const promptStatsData = [
 
 export default function PromptStatsChart() {
     return (
-        <Card className="bg-[#0B1120] border border-4 border-white/60 shadow-2xl rounded-2xl w-full">
-            <Card.Header className="px-6 pt-6 pb-4 border-b border-gray-800/50">
+        <Card className="bg-[#0B1120] border border-gray-800/60 shadow-2xl rounded-2xl overflow-hidden w-full flex flex-col">
+            <Card.Header className="px-6 pt-6 pb-2 border-b border-gray-800/50">
                 <h3 className="text-lg font-semibold flex items-center gap-2 text-white">
                     <FiCopy className="text-cyan-400" /> Prompt Templates: Copies vs Bookmarks
                 </h3>
             </Card.Header>
-            <Card.Content className="p-4 sm:p-6 w-full">
-                {/* সরাসরি ResponsiveContainer-এ height={350} দেওয়া হয়েছে */}
-                <div className="w-full">
-                    <ResponsiveContainer width="100%" height={350}>
+            <Card.Content className="p-4 sm:p-6 w-full overflow-hidden">
+                <div style={{ width: '100%', height: 350 }}>
+                    <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={promptStatsData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                             <defs>
                                 <linearGradient id="barCyan" x1="0" y1="0" x2="0" y2="1">

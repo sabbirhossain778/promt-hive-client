@@ -22,7 +22,6 @@ export default function AccumulativeGrowthChart() {
                 </h3>
             </Card.Header>
             <Card.Content className="p-4 sm:p-6 w-full">
-                {/* সরাসরি ResponsiveContainer-এ height={350} দেওয়া হয়েছে */}
                 <div className="w-full">
                     <ResponsiveContainer width="100%" height={350}>
                         <AreaChart data={growthData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>

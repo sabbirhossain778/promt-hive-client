@@ -61,3 +61,119 @@
     width: 100%;
   }
 }
+
+/* ======  add-prompt css ====== */
+/* text input */
+.text-input-class {
+  width: 100%;
+  color: #ffffff;
+  background-color: #1c1c1e;
+  border: 1px solid #27272a;
+  border-radius: 0.5rem;
+  height: 3rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  font-size: 0.875rem;
+  outline: none;
+  transition: all 150ms ease;
+}
+
+.text-input-class::placeholder {
+  color: #52525b;
+}
+
+.text-input-class:hover {
+  background-color: #242426;
+}
+
+.text-input-class:focus {
+  border-color: #8B5CF6;
+}
+
+.text-area-class {
+  width: 100%;
+  color: #ffffff;
+  background-color: #1c1c1e;
+  border: 1px solid #27272a;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  outline: none;
+  transition: all 150ms ease;
+}
+
+.text-area-class::placeholder {
+  color: #52525b;
+}
+
+.text-area-class:hover {
+  background-color: #242426;
+}
+
+.text-area-class:focus {
+  border-color: #8B5CF6;
+}
+
+/* Select Box Classes */
+.select-box-class {
+  width: 100%;
+}
+
+/* Select Trigger Classes */
+.trigger-classes {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #1c1c1e;
+  border: 1px solid #27272a;
+  height: 3rem;
+  border-radius: 0.5rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  color: #ffffff;
+  font-size: 0.875rem;
+  outline: none;
+  transition: all 150ms ease;
+}
+
+.trigger-classes:hover {
+  background-color: #242426;
+}
+
+/* HeroUI data attributes for focus and validation */
+.trigger-classes[data-focused="true"] {
+  border-color: #8B5CF6;
+}
+
+.trigger-classes[data-invalid="true"] {
+  border-color: #f31260;
+}
+
+/* Popover Classes */
+.popover-classes {
+  background-color: #1c1c1e;
+  border: 1px solid #27272a;
+  color: #ffffff;
+  border-radius: 0.5rem;
+  padding: 0.25rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* List Item Classes */
+.list-item-classes {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #e4e4e7;
+  outline: none;
+}
+
+.list-item-classes:hover,
+.list-item-classes[data-focused="true"] {
+  background-color: #27272a;
+}
