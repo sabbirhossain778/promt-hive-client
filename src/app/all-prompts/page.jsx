@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { Input } from "@heroui/react";
 import { Search, SlidersHorizontal } from "lucide-react";
 import PromptCard from '@/components/PromptCard';
+import { getAllPrompts } from '@/lib/api/prompts';
+// import { getAllPublicPrompts } from '@/lib/actions/prompt';
 
 // --- Mock Data ---
 const mockPrompts = [
@@ -60,6 +61,26 @@ export default function AllPromptsPage() {
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
+    const [prompts, setPrompts] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchPrompts = async () => {
+            setIsLoading(true);
+            try {
+                const data = await getAllPrompts();
+                console.log('All Prompts from API:', data);
+                setPrompts(data);
+            } catch (error) {
+                console.error("Failed to fetch prompts", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchPrompts();
+    }, []);
+
     const currentSearch = searchParams.get('search') || "";
     const currentSort = searchParams.get('sort') || "Latest";
     const currentAIEngine = searchParams.get('aiEngine') || "All";
@@ -114,8 +135,8 @@ export default function AllPromptsPage() {
                                         key={item}
                                         onClick={() => updateQueryParams('aiEngine', item)}
                                         className={`text-left px-3 py-2 rounded-xl text-sm transition-all ${currentAIEngine === item
-                                                ? "bg-[#1f1a36] text-[#a78bfa] font-medium border border-[#2e235e]"
-                                                : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/30 border border-transparent"
+                                            ? "bg-[#1f1a36] text-[#a78bfa] font-medium border border-[#2e235e]"
+                                            : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/30 border border-transparent"
                                             }`}
                                     >
                                         {item}
@@ -133,8 +154,8 @@ export default function AllPromptsPage() {
                                         key={item}
                                         onClick={() => updateQueryParams('category', item)}
                                         className={`text-left px-3 py-2 rounded-xl text-sm transition-all ${currentCategory === item
-                                                ? "bg-[#1f1a36] text-[#a78bfa] font-medium border border-[#2e235e]"
-                                                : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/30 border border-transparent"
+                                            ? "bg-[#1f1a36] text-[#a78bfa] font-medium border border-[#2e235e]"
+                                            : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/30 border border-transparent"
                                             }`}
                                     >
                                         {item}
@@ -152,8 +173,8 @@ export default function AllPromptsPage() {
                                         key={item}
                                         onClick={() => updateQueryParams('difficulty', item)}
                                         className={`text-left px-3 py-2 rounded-xl text-sm transition-all ${currentDifficulty === item
-                                                ? "bg-[#1f1a36] text-[#a78bfa] font-medium border border-[#2e235e]"
-                                                : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/30 border border-transparent"
+                                            ? "bg-[#1f1a36] text-[#a78bfa] font-medium border border-[#2e235e]"
+                                            : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/30 border border-transparent"
                                             }`}
                                     >
                                         {item}
@@ -176,8 +197,8 @@ export default function AllPromptsPage() {
                                     key={sortOption}
                                     onClick={() => updateQueryParams('sort', sortOption)}
                                     className={`px-4 py-2 rounded-xl text-sm whitespace-nowrap transition-all ${currentSort === sortOption
-                                            ? "bg-[#1a1c29] text-white border border-zinc-700 font-medium"
-                                            : "text-zinc-400 hover:text-white"
+                                        ? "bg-[#1a1c29] text-white border border-zinc-700 font-medium"
+                                        : "text-zinc-400 hover:text-white"
                                         }`}
                                 >
                                     {sortOption}
@@ -209,7 +230,7 @@ export default function AllPromptsPage() {
 
                     {/* Prompt Card! */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                        {mockPrompts.map((prompt) => (
+                        {prompts.map((prompt) => (
                             <PromptCard key={prompt._id} prompt={prompt} />
                         ))}
                     </div>

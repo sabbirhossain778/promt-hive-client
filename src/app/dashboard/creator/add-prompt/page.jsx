@@ -99,12 +99,12 @@ export default function AddPromptPage() {
 
         const payload = {
             ...data,
-            thumbnail: thumbnailUrl,
+            thumbnailUrl: thumbnailUrl,
             visibility: visibility,
             copyCount: 0,
             status: "pending",
             creatorId: user?.id,
-            creatorEmail: user?.email
+            creatorName: user?.name
         };
 
         try {

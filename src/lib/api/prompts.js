@@ -1,7 +1,16 @@
 'use server';
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-export const getCreatorPrompts = async (creatorId, status = 'pending') => {
-    const res = await fetch(`${baseUrl}/api/prompts?creatorId=${creatorId}&status=${status}`);
-    return res.json();
+import { serverFetch } from "../core/server";
+
+
+export const getCreatorPrompts = async (creatorId, status = 'all') => {
+
+    const path = `/api/prompts?creatorId=${creatorId}&status=${status}`;
+    const data = await serverFetch(path);
+    return data;
+}
+
+export const getAllPrompts = async () => {
+    const data = await serverFetch('/api/prompts');
+    return data;
 }
