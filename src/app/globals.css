@@ -177,3 +177,19 @@
 .list-item-classes[data-focused="true"] {
   background-color: #27272a;
 }
+
+
+
+/* ======= Table Header Class ======= */
+.table-header-cell {
+  background-color: transparent;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  color: #71717a;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(39, 39, 42, 0.5);
+  padding-top: 1rem;
+  padding-bottom: 0.75rem;
+}

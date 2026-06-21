@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@heroui/react";
+import { Sparkles } from "lucide-react";
 import { signOut, useSession } from "@/lib/auth-client";
 
 
@@ -30,15 +31,17 @@ export default function Navbar() {
         <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#0B0B0F]/80 backdrop-blur-xl">
             <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
                 {/* LOGO */}
-                <Link href="/" className="flex items-center gap-3">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-fuchsia-500 shadow-lg">
-                        <span className="text-xl font-bold text-white">AI</span>
+                <Link href="/" className="flex items-center gap-2 transition-transform hover:scale-[1.02]">
+                    {/* ไอকন বক্স */}
+                    <div className="bg-[#8B5CF6] p-1.5 rounded-lg shadow-[0_0_10px_rgba(139,92,246,0.5)]">
+                        <Sparkles className="size-5 text-white" />
                     </div>
 
-                    <div className="hidden leading-none sm:block">
-                        <h1 className="text-lg font-bold text-white">
-                            Promt Hive
-                        </h1>
+                    {/* টেক্সট (ছোট স্ক্রিনে লুকানো থাকবে) */}
+                    <div className="hidden sm:block leading-none">
+                        <span className="text-xl font-bold text-white tracking-wide">
+                            PromptHive
+                        </span>
                     </div>
                 </Link>
 
@@ -64,7 +67,7 @@ export default function Navbar() {
                         <div className="h-6 w-px bg-white/20" />
 
                         {/* User Info or  */}
-                        { user ?
+                        {user ?
                             <div className="flex items-center gap-4">
                                 <span className="text-md font-medium text-gray-300">
                                     Welcome, {user.name} !

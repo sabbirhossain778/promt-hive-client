@@ -11,15 +11,16 @@ import {
     FieldError,
     Select,
     ListBox,
-    RadioGroup, // ✅ Added RadioGroup
-    Radio,      // ✅ Added Radio
+    RadioGroup,
+    Radio,
     Button
 } from "@heroui/react";
-import { Sparkles, Globe } from "@gravity-ui/icons";
+import { Sparkles, Globe, ArrowUpToLine } from "@gravity-ui/icons";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import { createPrompt } from "@/lib/actions/prompt";
+import Image from "next/image";
 
 export default function AddPromptPage() {
     const router = useRouter();
@@ -29,6 +30,46 @@ export default function AddPromptPage() {
     const [visibility, setVisibility] = useState("Public");
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // ImageBB Upload States
+    const [thumbnailUrl, setThumbnailUrl] = useState('');
+    const [isUploading, setIsUploading] = useState(false);
+
+    //  Client side Imgbb Upload Handler
+    const handleThumbnailUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Simple Validation
+        if (file.size > 5 * 1024 * 1024) {
+            setErrors(prev => ({ ...prev, thumbnail: "File size exceeds 5MB limit" }));
+            return;
+        }
+
+        setIsUploading(true);
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            const IMGBB_API_KEY = process.env.NEXT_PUBLIC_IMAGE_UPLOAD_API;
+            const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                setThumbnailUrl(data.data.url);
+                setErrors(prev => ({ ...prev, thumbnail: null }));
+            } else {
+                setErrors(prev => ({ ...prev, thumbnail: "Upload failed. Try again." }));
+            }
+        } catch (err) {
+            setErrors(prev => ({ ...prev, thumbnail: "Network error during upload" }));
+        } finally {
+            setIsUploading(false);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -46,7 +87,7 @@ export default function AddPromptPage() {
         if (!data.promptDescription) newErrors.promptDescription = "Description is required";
         if (!data.promptContent) newErrors.promptContent = "Prompt content is required";
         if (!data.tags) newErrors.tags = "Tags are required";
-        if (!data.thumbnail) newErrors.thumbnail = "Thumbnail URL is required";
+        if (!thumbnailUrl) newErrors.thumbnail = "Thumbnail image is required";
 
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
@@ -58,6 +99,7 @@ export default function AddPromptPage() {
 
         const payload = {
             ...data,
+            thumbnail: thumbnailUrl,
             visibility: visibility,
             copyCount: 0,
             status: "pending",
@@ -72,12 +114,12 @@ export default function AddPromptPage() {
                 toast.success("Prompt added successfully! Waiting for admin approval.");
                 e.target.reset();
                 setVisibility("Public");
+                setThumbnailUrl('');
                 router.push("/dashboard/creator/my-prompts");
             } else {
                 toast.error("Something went wrong. Could not add prompt.");
             }
         } catch (error) {
-            // console.error("Error creating prompt:", error);
             toast.error("Failed to add prompt. Please try again.");
         } finally {
             setIsSubmitting(false);
@@ -98,7 +140,8 @@ export default function AddPromptPage() {
                             Share your best AI prompts with the marketplace.
                         </p>
                     </div>
-                    <div className="mt-4 inline-flex items-center gap-2 bg-zinc-900/50 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs text-zinc-400">
+                    <div 
+                    className="mt-4 inline-flex items-center gap-2 bg-zinc-900/50 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs text-zinc-400">
                         Status: <span className="text-[#8B5CF6] font-medium bg-purple-950/30 px-1.5 py-0.5 rounded border border-purple-900/50">Pending</span>
                     </div>
                 </div>
@@ -111,6 +154,7 @@ export default function AddPromptPage() {
                             Basic Information
                         </legend>
 
+                        {/* prompt title & description */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <TextField name="promptTitle" isInvalid={!!errors.promptTitle} className="flex flex-col gap-1 w-full">
                                 <Label className="text-zinc-400 font-medium text-sm">Prompt Title</Label>
@@ -136,6 +180,7 @@ export default function AddPromptPage() {
                             </Select>
                         </div>
 
+                        {/* AI Tool & Difficulty Level */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
                             <Select className="select-box-class" name="aiTool" isInvalid={!!errors.aiTool}>
                                 <Label className="text-zinc-400 font-medium text-sm mb-1 block">AI Tool</Label>
@@ -171,20 +216,38 @@ export default function AddPromptPage() {
                             </Select>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
-                            <TextField name="thumbnail" isInvalid={!!errors.thumbnail} className="flex flex-col gap-1 w-full relative">
-                                <Label className="text-zinc-400 font-medium text-sm">Thumbnail Image URL</Label>
-                                <div className="relative flex items-center">
-                                    <Globe size={16} className="absolute left-3 text-zinc-600 pointer-events-none z-10" />
-                                    <Input
-                                        placeholder="https://example.com/thumbnail.jpg"
-                                        className="text-input-class pl-10!"
-                                    />
+                        {/* Thumbnail Image */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                            {/* ✅ Replaced TextField with ImgBB Upload Block */}
+                            <div className="flex flex-col gap-1 w-full pt-1">
+                                <span className="text-zinc-400 font-medium text-sm">Thumbnail Image</span>
+                                <div className="flex items-center gap-4 mt-1">
+                                    <label className="w-16 h-16 border border-dashed border-zinc-700 hover:border-zinc-500 bg-zinc-900/40 rounded-xl flex flex-col items-center justify-center cursor-pointer transition-colors group relative overflow-hidden shrink-0">
+                                        <input
+                                            type="file"
+                                            accept="image/png, image/jpeg, image/webp"
+                                            onChange={handleThumbnailUpload}
+                                            className="hidden"
+                                        />
+                                        {thumbnailUrl ? (
+                                            <Image src={thumbnailUrl} width={100} height={100}
+                                            unoptimized
+                                            alt="Thumbnail Preview" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <ArrowUpToLine size={20} className="text-zinc-400 group-hover:text-zinc-200 transition-colors" />
+                                        )}
+                                    </label>
+                                    <div className="flex flex-col">
+                                        <span className="text-sm font-medium text-zinc-300">
+                                            {isUploading ? 'Uploading file...' : 'Upload image'}
+                                        </span>
+                                        <span className="text-xs text-zinc-600 mt-0.5">PNG, JPG, WEBP up to 5MB</span>
+                                        {errors.thumbnail && <span className="text-xs text-danger mt-1">{errors.thumbnail}</span>}
+                                    </div>
                                 </div>
-                                {errors.thumbnail && <FieldError className="text-xs text-danger mt-1">{errors.thumbnail}</FieldError>}
-                            </TextField>
+                            </div>
 
-                            <TextField name="tags" isInvalid={!!errors.tags} className="flex flex-col gap-1 w-full">
+                            <TextField name="tags" isInvalid={!!errors.tags} className="flex flex-col gap-1 w-full pt-1">
                                 <Label className="text-zinc-400 font-medium text-sm">Tags (Comma separated)</Label>
                                 <Input placeholder="e.g. seo, blogging, writing" className="text-input-class" />
                                 {errors.tags && <FieldError className="text-xs text-danger mt-1">{errors.tags}</FieldError>}
@@ -219,7 +282,7 @@ export default function AddPromptPage() {
                         </TextField>
                     </Fieldset>
 
-                    {/* ✅ SECTION 3: Prompt Visibility with RadioGroup (Bulletproof Method) */}
+                    {/* SECTION 3: Prompt Visibility with RadioGroup */}
                     <Fieldset className="w-full bg-[#121214] p-5 rounded-xl border border-zinc-900">
                         <div className="flex flex-col space-y-4">
                             <div className="space-y-1">
