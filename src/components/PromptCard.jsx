@@ -1,9 +1,11 @@
 import React from 'react';
 import { User, Copy, Star, Eye, Sparkles, Lock } from "lucide-react";
+import Link from 'next/link';
 
 export default function PromptCard({ prompt }) {
     
     const {
+        _id: promptId,
         promptTitle: title = "Untitled Prompt",
         promptDescription: description = "No description provided.",
         category = "Uncategorized",
@@ -91,10 +93,10 @@ export default function PromptCard({ prompt }) {
             </div>
 
             {/* Action Button */}
-            <button className="w-full flex items-center justify-center gap-2 bg-[#8B5CF6] text-white font-semibold hover:bg-[#7C3AED] transition-colors rounded-xl py-3 text-sm">
+            <Link href={`/all-prompts/${promptId}`} className="w-full flex items-center justify-center gap-2 bg-[#8B5CF6] text-white font-semibold hover:bg-[#7C3AED] transition-colors rounded-xl py-3 text-sm">
                 <Eye size={16} />
                 View Details
-            </button>
+            </Link>
         </div>
     );
 }

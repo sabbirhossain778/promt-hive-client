@@ -193,3 +193,16 @@
   padding-top: 1rem;
   padding-bottom: 0.75rem;
 }
+
+
+/* Filter Scrollbar  */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 20px;
+}

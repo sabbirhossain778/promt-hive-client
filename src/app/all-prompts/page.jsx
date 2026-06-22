@@ -3,52 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { Search, SlidersHorizontal } from "lucide-react";
+import { ChevronDown, ChevronUp } from '@gravity-ui/icons';
 import PromptCard from '@/components/PromptCard';
 import { getAllPrompts } from '@/lib/api/prompts';
-// import { getAllPublicPrompts } from '@/lib/actions/prompt';
 
-// --- Mock Data ---
-const mockPrompts = [
-    {
-        _id: "1",
-        title: "Cum et earum dolores",
-        description: "Qui veniam aut ad q...",
-        category: "Idea Generation",
-        aiTool: "Midjourney",
-        difficulty: "Intermediate",
-        creatorName: "Creator",
-        copies: 0,
-        rating: 0.0,
-        isPremium: true,
-        thumbnail: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop"
-    },
-    {
-        _id: "2",
-        title: "Claude 3.5 Sonnet Fullstack Architect",
-        description: "Creates optimal database schemas and corresponding backend route templates with security validations.",
-        category: "Coding",
-        aiTool: "Claude",
-        difficulty: "Pro",
-        creatorName: "Prompt Engineer Creator",
-        copies: 211,
-        rating: 5.0,
-        isPremium: false,
-        thumbnail: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2670&auto=format&fit=crop"
-    },
-    {
-        _id: "3",
-        title: "Gemini Long-form SEO Content Copywriter",
-        description: "Structures comprehensive outline drafts for blog articles optimizing selected Google keywords.",
-        category: "Writing",
-        aiTool: "Gemini",
-        difficulty: "Beginner",
-        creatorName: "Prompt Engineer Creator",
-        copies: 65,
-        rating: 1.0,
-        isPremium: false,
-        thumbnail: "https://images.unsplash.com/photo-1432821596592-e2c18b78144f?q=80&w=2670&auto=format&fit=crop"
-    }
-];
 
 const FILTER_OPTIONS = {
     aiEngine: ["All", "ChatGPT", "Gemini", "Claude", "Midjourney", "Stable Diffusion", "Other"],
@@ -64,11 +22,18 @@ export default function AllPromptsPage() {
     const [prompts, setPrompts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    const [openFilters, setOpenFilters] = useState({
+        aiEngine: true,
+        category: false,
+        difficulty: false
+    });
+
     useEffect(() => {
         const fetchPrompts = async () => {
             setIsLoading(true);
             try {
-                const data = await getAllPrompts();
+                const params = Object.fromEntries(searchParams.entries());
+                const data = await getAllPrompts(params);
                 console.log('All Prompts from API:', data);
                 setPrompts(data);
             } catch (error) {
@@ -79,7 +44,7 @@ export default function AllPromptsPage() {
         };
 
         fetchPrompts();
-    }, []);
+    }, [searchParams]);
 
     const currentSearch = searchParams.get('search') || "";
     const currentSort = searchParams.get('sort') || "Latest";
@@ -114,9 +79,9 @@ export default function AllPromptsPage() {
             <div className="max-w-350 mx-auto flex flex-col lg:flex-row gap-8">
 
                 {/* SIDEBAR FILTERS */}
-                <aside className="w-full lg:w-72 shrink-0 space-y-6">
-                    <div className="bg-[#0B1120] border border-zinc-800/80 rounded-2xl p-5 sticky top-24">
-                        <div className="flex items-center justify-between mb-6">
+                <aside className="w-full lg:w-72 shrink-0">
+                    <div className="bg-[#0B1120] border border-zinc-800/80 rounded-2xl p-5 sticky top-24 max-h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar">
+                        <div className="flex items-center justify-between mb-6 sticky top-0 bg-[#0B1120] z-10 pb-2">
                             <div className="flex items-center gap-2 text-white font-bold text-lg">
                                 <SlidersHorizontal size={20} />
                                 <span>Filters</span>
@@ -127,60 +92,84 @@ export default function AllPromptsPage() {
                         </div>
 
                         {/* AI Engine Filter */}
-                        <div className="mb-6">
-                            <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-3">AI Engine</h3>
-                            <div className="flex flex-col gap-1">
-                                {FILTER_OPTIONS.aiEngine.map(item => (
-                                    <button
-                                        key={item}
-                                        onClick={() => updateQueryParams('aiEngine', item)}
-                                        className={`text-left px-3 py-2 rounded-xl text-sm transition-all ${currentAIEngine === item
-                                            ? "bg-[#1f1a36] text-[#a78bfa] font-medium border border-[#2e235e]"
-                                            : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/30 border border-transparent"
-                                            }`}
-                                    >
-                                        {item}
-                                    </button>
-                                ))}
-                            </div>
+                        <div className="mb-4">
+                            <button
+                                onClick={() => setOpenFilters({ ...openFilters, aiEngine: !openFilters.aiEngine })}
+                                className="flex items-center justify-between w-full text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2 hover:text-zinc-300 transition-colors"
+                            >
+                                AI Engine
+                                {openFilters.aiEngine ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                            </button>
+                            {openFilters.aiEngine && (
+                                <div className="flex flex-col gap-1 transition-all">
+                                    {FILTER_OPTIONS.aiEngine.map(item => (
+                                        <button
+                                            key={item}
+                                            onClick={() => updateQueryParams('aiEngine', item)}
+                                            className={`text-left px-3 py-2 rounded-xl text-sm transition-all ${currentAIEngine === item
+                                                ? "bg-[#1f1a36] text-[#a78bfa] font-medium border border-[#2e235e]"
+                                                : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/30"
+                                                }`}
+                                        >
+                                            {item}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
                         {/* Category Filter */}
-                        <div className="mb-6">
-                            <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-3">Category</h3>
-                            <div className="flex flex-col gap-1">
-                                {FILTER_OPTIONS.category.map(item => (
-                                    <button
-                                        key={item}
-                                        onClick={() => updateQueryParams('category', item)}
-                                        className={`text-left px-3 py-2 rounded-xl text-sm transition-all ${currentCategory === item
-                                            ? "bg-[#1f1a36] text-[#a78bfa] font-medium border border-[#2e235e]"
-                                            : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/30 border border-transparent"
-                                            }`}
-                                    >
-                                        {item}
-                                    </button>
-                                ))}
-                            </div>
+                        <div className="mb-4">
+                            <button
+                                onClick={() => setOpenFilters({ ...openFilters, category: !openFilters.category })}
+                                className="flex items-center justify-between w-full text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2 hover:text-zinc-300 transition-colors"
+                            >
+                                Category
+                                {openFilters.category ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                            </button>
+                            {openFilters.category && (
+                                <div className="flex flex-col gap-1 transition-all">
+                                    {FILTER_OPTIONS.category.map(item => (
+                                        <button
+                                            key={item}
+                                            onClick={() => updateQueryParams('category', item)}
+                                            className={`text-left px-3 py-2 rounded-xl text-sm transition-all ${currentCategory === item
+                                                ? "bg-[#1f1a36] text-[#a78bfa] font-medium border border-[#2e235e]"
+                                                : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/30"
+                                                }`}
+                                        >
+                                            {item}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
                         {/* Difficulty Filter */}
                         <div>
-                            <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-3">Difficulty</h3>
-                            <div className="flex flex-col gap-1">
-                                {FILTER_OPTIONS.difficulty.map(item => (
-                                    <button
-                                        key={item}
-                                        onClick={() => updateQueryParams('difficulty', item)}
-                                        className={`text-left px-3 py-2 rounded-xl text-sm transition-all ${currentDifficulty === item
-                                            ? "bg-[#1f1a36] text-[#a78bfa] font-medium border border-[#2e235e]"
-                                            : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/30 border border-transparent"
-                                            }`}
-                                    >
-                                        {item}
-                                    </button>
-                                ))}
-                            </div>
+                            <button
+                                onClick={() => setOpenFilters({ ...openFilters, difficulty: !openFilters.difficulty })}
+                                className="flex items-center justify-between w-full text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2 hover:text-zinc-300 transition-colors"
+                            >
+                                Difficulty
+                                {openFilters.difficulty ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                            </button>
+                            {openFilters.difficulty && (
+                                <div className="flex flex-col gap-1 transition-all">
+                                    {FILTER_OPTIONS.difficulty.map(item => (
+                                        <button
+                                            key={item}
+                                            onClick={() => updateQueryParams('difficulty', item)}
+                                            className={`text-left px-3 py-2 rounded-xl text-sm transition-all ${currentDifficulty === item
+                                                ? "bg-[#1f1a36] text-[#a78bfa] font-medium border border-[#2e235e]"
+                                                : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/30"
+                                                }`}
+                                        >
+                                            {item}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </aside>
@@ -221,7 +210,11 @@ export default function AllPromptsPage() {
                                     type="text"
                                     placeholder="Search by title, tags, or AI tool..."
                                     value={searchInput}
-                                    onChange={(e) => setSearchInput(e.target.value)}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        setSearchInput(value);
+                                        updateQueryParams('search', value);
+                                    }}
                                     className="w-full bg-[#121626] border border-zinc-800 hover:border-zinc-700 focus:border-[#8B5CF6] focus:outline-none text-white text-sm rounded-lg pl-10 pr-4 py-2.5 transition-colors"
                                 />
                             </div>

@@ -102,9 +102,12 @@ export default function AddPromptPage() {
             thumbnailUrl: thumbnailUrl,
             visibility: visibility,
             copyCount: 0,
+            rating: 0,
             status: "pending",
             creatorId: user?.id,
-            creatorName: user?.name
+            creatorName: user?.name,
+            creatorEmail: user?.email,
+            creatorImage: user?.image || "",
         };
 
         try {
@@ -140,8 +143,8 @@ export default function AddPromptPage() {
                             Share your best AI prompts with the marketplace.
                         </p>
                     </div>
-                    <div 
-                    className="mt-4 inline-flex items-center gap-2 bg-zinc-900/50 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs text-zinc-400">
+                    <div
+                        className="mt-4 inline-flex items-center gap-2 bg-zinc-900/50 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs text-zinc-400">
                         Status: <span className="text-[#8B5CF6] font-medium bg-purple-950/30 px-1.5 py-0.5 rounded border border-purple-900/50">Pending</span>
                     </div>
                 </div>
@@ -231,8 +234,8 @@ export default function AddPromptPage() {
                                         />
                                         {thumbnailUrl ? (
                                             <Image src={thumbnailUrl} width={100} height={100}
-                                            unoptimized
-                                            alt="Thumbnail Preview" className="w-full h-full object-cover" />
+                                                unoptimized
+                                                alt="Thumbnail Preview" className="w-full h-full object-cover" />
                                         ) : (
                                             <ArrowUpToLine size={20} className="text-zinc-400 group-hover:text-zinc-200 transition-colors" />
                                         )}
