@@ -2,13 +2,16 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Envelope, Lock, Eye, EyeSlash, ArrowLeft } from "@gravity-ui/icons";
 import { authClient } from "@/lib/auth-client";
 import { toast } from 'react-toastify';
 
 export default function SignInPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const redirectTo = searchParams.get('redirect') || '/' ;
+
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -26,19 +29,17 @@ export default function SignInPage() {
     const handleSignIn = async (e) => {
         e.preventDefault();
         setLoading(true);
-
         try {
             const { error: authError } = await authClient.signIn.email({
                 email,
                 password,
-                callbackURL: "/"
             });
 
             if (authError) {
                 toast.error(authError.message || "Invalid credentials!");
             } else {
                 toast.success("Login successful!");
-                router.push('/');
+                router.push(redirectTo);
             }
         } catch (err) {
             toast.error("An unexpected error occurred.");
@@ -111,7 +112,7 @@ export default function SignInPage() {
                 </form>
 
                 <p className="mt-8 text-center text-sm text-gray-400">
-                    Don't have an account? <Link href="/auth/signup" className="text-[#8B5CF6] font-medium hover:underline">Create account</Link>
+                    Don't have an account? <Link href={`/auth/signup?redirect=${redirectTo}`} className="text-[#8B5CF6] font-medium hover:underline">Create account</Link>
                 </p>
             </div>
         </div>

@@ -13,6 +13,10 @@ export const getPromptById = async (promptId) => {
     return serverFetch(`/api/prompts/${promptId}`)
 }
 
+export const getFeaturedPrompts = async () => {
+    return serverFetch('/api/prompts/trending');
+};
+
 export const getCreatorPrompts = async (creatorId, status = 'all') => {
 
     const path = `/api/prompts?creatorId=${creatorId}&status=${status}`;

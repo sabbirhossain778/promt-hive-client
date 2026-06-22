@@ -5,10 +5,14 @@ import {
     Bookmark, Flag, Copy, Star,
     User, Eye, Target, Sparkles, AlertCircle, MessageSquare
 } from 'lucide-react';
+import { getUserSession } from '@/lib/core/session';
+import { redirect } from 'next/navigation';
 
 const PromptDetailsPage = async ({ params }) => {
     const { id } = await params;
     const prompt = await getPromptById(id);
+    const user = await getUserSession();
+
 
     const {
         promptTitle: title = "Untitled Prompt",
@@ -24,6 +28,10 @@ const PromptDetailsPage = async ({ params }) => {
         creatorEmail = "creator@aiverse.com",
         creatorImage
     } = prompt || {};
+
+    if (!user) {
+        redirect(`/auth/signin?redirect=/all-prompts/${id}`);
+    }
 
     return (
         <div className="min-h-screen bg-[#050B14] text-zinc-200 p-4 md:p-8 relative overflow-hidden">

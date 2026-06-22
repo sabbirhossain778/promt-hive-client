@@ -33,27 +33,27 @@ export default function Footer() {
             </h3>
             <ul className="space-y-4 text-sm">
               <li>
-                <Link href="/prompts" className="hover:text-white transition-colors">
+                <Link href="/all-prompts" className="hover:text-white transition-colors">
                   All Prompts
                 </Link>
               </li>
               <li>
-                <Link href="/trending" className="hover:text-white transition-colors">
+                <Link href="/all-prompts" className="hover:text-white transition-colors">
                   Trending Prompts
                 </Link>
               </li>
               <li>
-                <Link href="/login" className="hover:text-white transition-colors">
+                <Link href="/auth/signin" className="hover:text-white transition-colors">
                   Login
                 </Link>
               </li>
               <li>
-                <Link href="/register" className="hover:text-white transition-colors">
+                <Link href="/auth/signup" className="hover:text-white transition-colors">
                   Register
                 </Link>
               </li>
               <li>
-                <Link href="/demo" className="hover:text-white transition-colors">
+                <Link href="/auth/signup" className="hover:text-white transition-colors">
                   Demo User
                 </Link>
               </li>

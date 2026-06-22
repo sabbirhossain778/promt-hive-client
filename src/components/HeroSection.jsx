@@ -82,7 +82,7 @@ export default function HeroSection() {
           <ArrowRight width={18} height={18} />
         </Link>
         <Link 
-          href="/register"
+          href="/auth/signup"
           className="px-8 py-3.5 bg-[#0B1120] hover:bg-gray-800 border border-gray-700 text-white font-semibold rounded-full transition-all"
         >
           Become a Creator
