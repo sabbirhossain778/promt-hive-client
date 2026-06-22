@@ -4,17 +4,21 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button, Drawer } from "@heroui/react";
-import { 
-    LayoutDashboard, 
-    Sparkles, 
-    PlusCircle, 
-    Settings, 
+import {
+    LayoutDashboard,
+    Sparkles,
+    PlusCircle,
+    Settings,
     LogOut,
     Menu
 } from "lucide-react";
+import { useSession } from "@/lib/auth-client";
+import Image from "next/image";
 
 export function DashboardSideBar() {
     const pathname = usePathname();
+    const { data: session } = useSession();
+    const user = session?.user;
 
     const navItems = [
         { icon: LayoutDashboard, href: "/dashboard/creator", label: "Dashboard" },
@@ -24,19 +28,18 @@ export function DashboardSideBar() {
     ];
 
     const navContent = (
-        <div className="flex flex-col h-full justify-between">
+        <div className="flex flex-col h-full justify-between pb-4">
             <nav className="flex flex-col gap-2 mt-4">
                 {navItems.map((item) => {
                     const isActive = pathname === item.href;
-                    
+
                     return (
                         <Link key={item.label} href={item.href}>
                             <button
-                                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all ${
-                                    isActive 
+                                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all ${isActive
                                     ? "bg-[#8B5CF6] text-white shadow-[0_0_15px_rgba(139,92,246,0.2)]" // Active State
                                     : "text-zinc-400 hover:bg-[#121626] hover:text-zinc-100" // Normal State
-                                }`}
+                                    }`}
                                 type="button"
                             >
                                 <item.icon className={`size-5 ${isActive ? "text-white" : "text-zinc-500"}`} />
@@ -46,8 +49,8 @@ export function DashboardSideBar() {
                     );
                 })}
             </nav>
-            
-            {/* নিচের দিকে লগআউট বাটন */}
+
+            {/* logout button */}
             <div className="mt-auto pt-4 border-t border-zinc-800/80">
                 <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-danger transition-all hover:bg-danger/10">
                     <LogOut className="size-5" />
@@ -59,29 +62,49 @@ export function DashboardSideBar() {
 
     return (
         <>
-            {/* Desktop Sidebar (Large Screens) */}
-            <aside className="hidden w-64 flex-col gap-4 border-r border-zinc-800/80 bg-[#0B1120] p-4 lg:flex min-h-screen sticky top-0">
-                {/* Logo Section */}
-                <div className="flex items-center gap-2 px-2 py-4 mb-2">
-                    <div className="bg-[#8B5CF6] p-1.5 rounded-lg shadow-[0_0_10px_rgba(139,92,246,0.5)]">
-                        <Sparkles className="size-5 text-white" />
+            <aside className="hidden w-64 flex-col gap-4 border-r border-zinc-800/80 bg-[#0B1120] p-4 lg:flex sticky top-20 h-[calc(100vh-5rem)] overflow-y-auto">
+                {/* User Profile Section */}
+                <div className="flex items-center gap-3 px-4 py-6 mb-2 border-b border-white/10 shrink-0">
+                    {/* User Avatar */}
+                    <div className="relative shrink-0">
+                        {user?.image ? (
+                            <Image
+                                src={user.image}
+                                alt={user.name || "User"}
+                                width={44}
+                                height={44}
+                                className="w-11 h-11 rounded-full object-cover border-2 border-[#8B5CF6]/50 shadow-[0_0_10px_rgba(139,92,246,0.3)]"
+                            />
+                        ) : (
+                            <div className="w-11 h-11 rounded-full bg-linear-to-br from-[#8B5CF6] to-[#5B21B6] flex items-center justify-center text-white font-bold text-lg border-2 border-[#8B5CF6]/50 shadow-[0_0_10px_rgba(139,92,246,0.3)]">
+                                {user?.name?.charAt(0).toUpperCase() || "U"}
+                            </div>
+                        )}
+
+                        {/* Active Status Dot */}
+                        <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-[#0B0B0F] rounded-full"></span>
                     </div>
-                    <span className="text-xl font-bold text-white tracking-wide">PromptHive</span>
+
+                    {/* User Info (Name & Role) */}
+                    <div className="flex flex-col overflow-hidden">
+                        <span className="text-base font-bold text-white tracking-wide truncate">
+                            {user?.name || "Loading..."}
+                        </span>
+                        <span className="text-xs font-medium text-zinc-400 capitalize mt-0.5">
+                            {user?.role || "User"}
+                        </span>
+                    </div>
                 </div>
-                
+
                 {navContent}
             </aside>
 
             {/* Mobile Sidebar (Small Screens using Drawer) */}
             <div className="lg:hidden w-full sticky top-0 z-50 p-4 bg-[#0B1120] border-b border-zinc-800/80 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <Sparkles className="size-5 text-[#8B5CF6]" />
-                    <span className="text-lg font-bold text-white tracking-wide">PromptHive</span>
-                </div>
                 <Drawer>
-                    <Button 
+                    <Button
                         isIconOnly
-                        className="bg-[#0B1120] border border-zinc-800 text-zinc-300" 
+                        className="bg-[#0B1120] border border-zinc-800 text-zinc-300"
                         variant="bordered"
                         aria-label="Open Sidebar"
                     >

@@ -39,7 +39,7 @@ export default function SignInPage() {
                 toast.error(authError.message || "Invalid credentials!");
             } else {
                 toast.success("Login successful!");
-                router.push(redirectTo);
+                window.location.href = redirectTo || "/";
             }
         } catch (err) {
             toast.error("An unexpected error occurred.");

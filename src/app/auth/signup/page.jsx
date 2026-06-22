@@ -12,7 +12,7 @@ import { toast } from 'react-toastify';
 export default function SignUpPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const redirectTo = searchParams.get('redirect') || '/' ;
+    const redirectTo = searchParams.get('redirect') || '/';
 
     // Form fields
     const [name, setName] = useState("");
@@ -62,8 +62,8 @@ export default function SignUpPage() {
                 setPassword("");
                 setPhotoUrl("");
                 setRole("user");
-
-                router.push(redirectTo);
+                
+                window.location.href = redirectTo || "/";
             }
         } catch (err) {
             setError("An unexpected network error occurred.");
