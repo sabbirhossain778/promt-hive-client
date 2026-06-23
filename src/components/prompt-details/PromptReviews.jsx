@@ -4,28 +4,36 @@ import { Star, MessageSquare, Lock } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { submitReview } from '@/lib/actions/review';
 import { getReviewsByPromptId } from '@/lib/api/reviews';
+import Image from 'next/image';
 
 export default function PromptReviews({ promptId, isLocked, user, initialReviews }) {
     const [rating, setRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
     const [comment, setComment] = useState("");
     const [reviews, setReviews] = useState(initialReviews);
+    console.log('role', user);
+    
 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (rating === 0) return toast.error("Please select a rating.");
         if (!comment.trim()) return toast.error("Please write a comment.");
+        console.log("Submitting User Object:", user);
 
         try {
             await submitReview({
                 promptId,
                 rating,
                 reviewText: comment,
+                userId: user?.id,
+                userName: user?.name,
+                userImage: user?.image,
+                role: user?.role || "Member"
             });
             const updatedReviews = await getReviewsByPromptId(promptId);
             setReviews(updatedReviews);
-             toast.success("Review submitted successfully!");
+            toast.success("Review submitted successfully!");
 
             setRating(0);
             setComment("");
@@ -91,19 +99,54 @@ export default function PromptReviews({ promptId, isLocked, user, initialReviews
                     </form>
                 </div>
 
-                {/* Reviews List / Empty State */}
                 {/* Reviews List */}
                 <div className="space-y-4 max-h-[500px] overflow-y-auto">
                     {reviews.length > 0 ? (
                         reviews.map((review) => (
                             <div key={review._id} className="bg-[#0B1120] border border-zinc-800 rounded-xl p-4">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <div className="flex text-amber-400">
-                                        {[...Array(review.rating)].map((_, i) => <Star key={i} size={14} fill="currentColor" />)}
+
+                                {/* name, role, date */}
+                                <div className="flex justify-between items-start mb-3">
+                                    <div className="flex items-center gap-3">
+                                        {review.userImage ? (
+                                            <Image
+                                                key={review.userImage}
+                                                src={review.userImage || "/default-avatar.png"}
+                                                alt={review.userName || "User"}
+                                                width={32}
+                                                height={32}
+                                                className="w-8 h-8 rounded-full border border-zinc-700 object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center text-xs font-bold text-white">
+                                                {review.userName?.charAt(0) || "A"}
+                                            </div>
+                                        )}
+                                        <div>
+                                            <h4 className="text-white font-bold text-sm">
+                                                {review.userName || "Anonymous"}
+                                                <span className="text-zinc-500 font-normal ml-1">
+                                                    ({review.role})
+                                                </span>
+                                            </h4>
+                                        </div>
                                     </div>
-                                    <span className="text-zinc-500 text-xs">(review.createdAt).toLocaleDateString()</span>
+                                    <span className="text-zinc-500 text-[10px]" suppressHydrationWarning>
+                                        {new Date(review.createdAt).toLocaleDateString()}
+                                    </span>
                                 </div>
-                                <p className="text-zinc-300 text-sm">{review.reviewText}</p>
+
+                                {/* text & rating */}
+                                <div className="flex justify-between items-center">
+                                    <p className="text-zinc-300 text-sm leading-relaxed pr-4">
+                                        {review.reviewText}
+                                    </p>
+                                    <div className="flex text-amber-400 shrink-0">
+                                        {[...Array(5)].map((_, i) => (
+                                            <Star key={i} size={14} className={i < review.rating ? "fill-amber-400" : "text-zinc-700"} />
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
                         ))
                     ) : (

@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { Star, User } from 'lucide-react';
 
 export default function PromptSidebar({ prompt }) {
-    const { aiTool, category, difficulty, visibility, copies, rating, creatorName, creatorEmail, creatorImage } = prompt;
+    const { aiTool, category, difficulty, visibility, copies, rating, creatorName, creatorEmail, creatorImage, reviewCount } = prompt;
 
     return (
         <>
@@ -37,12 +37,13 @@ export default function PromptSidebar({ prompt }) {
                         <span className="text-zinc-400">Community Rating</span>
                         <div className="flex items-center gap-1.5 text-amber-400 font-bold">
                             <Star size={14} className="fill-amber-400" />
-                            {rating} <span className="text-zinc-500 font-normal text-xs">(0)</span>
+                            {rating} <span className="text-zinc-500 font-normal text-xs">({reviewCount})</span>
                         </div>
                     </div>
                 </div>
             </div>
 
+            {/* Creator Information */}
             <div className="bg-[#0B1120]/80 backdrop-blur-xl border border-zinc-800/80 rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:border-zinc-700 transition-colors">
                 <h3 className="text-sm font-bold text-zinc-500 uppercase tracking-wider mb-4">Creator Information</h3>
                 <div className="flex items-center gap-4">

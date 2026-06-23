@@ -12,8 +12,11 @@ const PromptDetailsPage = async ({ params }) => {
     const prompt = await getPromptById(id);
     const user = await getUserSession();
     const reviews = await getReviewsByPromptId(id);
-    console.log('get Reviews By PromptId', reviews);
-    
+
+    const totalReviews = reviews.length;
+    const averageRating = totalReviews > 0
+        ? (reviews.reduce((acc, curr) => acc + curr.rating, 0) / totalReviews).toFixed(1)
+        : 0;
 
     if (!user) {
         redirect(`/auth/signin?redirect=/all-prompts/${id}`);
@@ -77,7 +80,11 @@ const PromptDetailsPage = async ({ params }) => {
                     {/* RIGHT COLUMN: Stats & Creator Info */}
                     <div className="space-y-6">
                         <PromptSidebar
-                            prompt={{ aiTool, category, difficulty, visibility, copies, rating, creatorName, creatorEmail, creatorImage }}
+                            prompt={{
+                                ...prompt,
+                                rating: averageRating,
+                                reviewCount: totalReviews
+                            }}
                         />
                     </div>
                 </div>
@@ -88,6 +95,7 @@ const PromptDetailsPage = async ({ params }) => {
                     isLocked={isLocked}
                     user={user}
                     initialReviews={reviews}
+                    
                 />
             </div>
         </div>
