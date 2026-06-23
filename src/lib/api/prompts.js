@@ -23,3 +23,4 @@ export const getCreatorPrompts = async (creatorId, status = 'all') => {
     const data = await serverFetch(path);
     return data;
 }
+

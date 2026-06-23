@@ -1,7 +1,11 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bookmark, Flag, X } from 'lucide-react';
 import { toast } from 'react-toastify';
+
+// ইমপোর্টগুলো আপনার স্ট্রাকচার অনুযায়ী
+import { checkBookmarkStatus } from '@/lib/api/bookmarks'; 
+import { submitReport, toggleBookmark } from '@/lib/actions/bookmark';
 
 export default function PromptActions({ promptId, userId }) {
     const [isBookmarked, setIsBookmarked] = useState(false);
@@ -9,23 +13,47 @@ export default function PromptActions({ promptId, userId }) {
     const [reportReason, setReportReason] = useState("");
     const [reportDescription, setReportDescription] = useState("");
 
+
+    useEffect(() => {
+        const init = async () => {
+            if (promptId && userId) {
+                const status = await checkBookmarkStatus(promptId, userId);
+                setIsBookmarked(status);
+            }
+        };
+        init();
+    }, [promptId, userId]);
+
+    // Bookmark ---- Server Action
     const handleBookmark = async () => {
+        if (!userId) return toast.error("Please login to bookmark!");
+        
+        const previousState = isBookmarked;
+        setIsBookmarked(!isBookmarked); 
+
         try {
-            // TODO: API Call -> await axios.post(`/api/bookmarks/toggle`, { promptId })
-            setIsBookmarked(!isBookmarked);
-            toast.success(isBookmarked ? 'Bookmark removed!' : 'Prompt bookmarked successfully!');
+            const result = await toggleBookmark({ promptId, userId });
+            setIsBookmarked(result.isBookmarked);
+            toast.success(result.isBookmarked ? 'Prompt bookmarked!' : 'Bookmark removed!');
         } catch (error) {
+            setIsBookmarked(previousState);
             toast.error('Failed to update bookmark.');
         }
     };
 
+    // Report submit (Server Action)
     const handleReportSubmit = async (e) => {
         e.preventDefault();
         if (!reportReason) return toast.error("Please select a reason.");
         
         try {
-            // TODO: API Call -> await axios.post(`/api/reports`, { promptId, reason: reportReason, description: reportDescription })
-            toast.success('Prompt reported successfully. Our team will review it.');
+            await submitReport({ 
+                promptId, 
+                reporterId: userId, 
+                reason: reportReason, 
+                description: reportDescription 
+            });
+            toast.success('Prompt reported successfully.');
             setIsReportModalOpen(false);
             setReportReason("");
             setReportDescription("");
@@ -51,7 +79,7 @@ export default function PromptActions({ promptId, userId }) {
                 </button>
             </div>
 
-            {/* Report Modal */}
+            {/* Report modal */}
             {isReportModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
                     <div className="bg-[#0B1120] border border-zinc-800 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden relative">
@@ -61,8 +89,6 @@ export default function PromptActions({ promptId, userId }) {
                                 <X size={20} />
                             </button>
                         </div>
-
-                        {/* report form */}
                         <form onSubmit={handleReportSubmit} className="p-6 space-y-4">
                             <div>
                                 <label className="text-sm font-medium text-zinc-400 block mb-2">Reason for reporting</label>
@@ -88,8 +114,6 @@ export default function PromptActions({ promptId, userId }) {
                                     className="w-full bg-[#05080f] border border-zinc-800 rounded-xl p-3 text-sm text-zinc-200 focus:outline-none focus:border-red-500 resize-none"
                                 ></textarea>
                             </div>
-                            
-                            {/* submit btn */}
                             <button type="submit" className="w-full py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl transition-all">
                                 Submit Report
                             </button>

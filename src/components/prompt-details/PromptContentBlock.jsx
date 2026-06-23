@@ -1,19 +1,23 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 import { Copy, Sparkles, AlertCircle, Lock } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
+import { incrementCopyCount } from '@/lib/actions/bookmark';
 
-export default function PromptContentBlock({ content, aiTool, isLocked, promptId }) {
+export default function PromptContentBlock({ content, aiTool, initialCopies, isLocked, promptId }) {
     const router = useRouter();
+    const [copies, setCopies] = useState(initialCopies);
 
     const handleCopy = async () => {
         if (isLocked) return;
         try {
             await navigator.clipboard.writeText(content);
-            // TODO: API Call to increment copy count -> await axios.post(`/api/prompts/${promptId}/copy`)
+            setCopies(prev => prev + 1);
+            await incrementCopyCount(promptId);
             toast.success('Prompt copied to clipboard!');
         } catch (err) {
+            setCopies(prev => prev - 1);
             toast.error('Failed to copy prompt.');
         }
     };
@@ -34,7 +38,7 @@ export default function PromptContentBlock({ content, aiTool, isLocked, promptId
                             className="flex items-center gap-2 px-4 py-2 bg-[#121626] border border-zinc-700/50 rounded-lg text-sm font-medium hover:bg-[#8B5CF6] hover:text-white hover:border-[#8B5CF6] transition-all duration-300"
                         >
                             <Copy size={16} />
-                            Copy
+                            Copy ({copies})
                         </button>
                     )}
                 </div>

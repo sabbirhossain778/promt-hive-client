@@ -5,11 +5,15 @@ import PromptActions from '@/components/prompt-details/PromptActions';
 import PromptContentBlock from '@/components/prompt-details/PromptContentBlock';
 import PromptSidebar from '@/components/prompt-details/PromptSidebar';
 import PromptReviews from '@/components/prompt-details/PromptReviews';
+import { getReviewsByPromptId } from '@/lib/api/reviews';
 
 const PromptDetailsPage = async ({ params }) => {
     const { id } = await params;
     const prompt = await getPromptById(id);
     const user = await getUserSession();
+    const reviews = await getReviewsByPromptId(id);
+    console.log('get Reviews By PromptId', reviews);
+    
 
     if (!user) {
         redirect(`/auth/signin?redirect=/all-prompts/${id}`);
@@ -64,6 +68,7 @@ const PromptDetailsPage = async ({ params }) => {
                         <PromptContentBlock
                             content={promptContent}
                             aiTool={aiTool}
+                            initialCopies={prompt.copies}
                             isLocked={isLocked}
                             promptId={id}
                         />
@@ -78,7 +83,12 @@ const PromptDetailsPage = async ({ params }) => {
                 </div>
 
                 {/* REVIEWS SECTION */}
-                <PromptReviews promptId={id} isLocked={isLocked} />
+                <PromptReviews
+                    promptId={id}
+                    isLocked={isLocked}
+                    user={user}
+                    initialReviews={reviews}
+                />
             </div>
         </div>
     );
