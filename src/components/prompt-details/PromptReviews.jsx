@@ -11,7 +11,7 @@ export default function PromptReviews({ promptId, isLocked, user, initialReviews
     const [hoverRating, setHoverRating] = useState(0);
     const [comment, setComment] = useState("");
     const [reviews, setReviews] = useState(initialReviews);
-    console.log('role', user);
+    // console.log('role', user);
     
 
 

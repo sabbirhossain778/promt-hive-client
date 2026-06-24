@@ -29,10 +29,10 @@ export default function Navbar() {
 
     // Add Dashboard dynamically if user is logged in
     if (user) {
-        const userRole = user?.role || "user"; 
+        const userRole = user?.role || "user";
         navLinks.push({
             label: "Dashboard",
-            href: `/dashboard/${userRole}`,
+            href: userRole === "user" ? "/dashboard/user/profile" : `/dashboard/${userRole}`,
         });
     }
 

@@ -17,6 +17,9 @@ export const auth = betterAuth({
             role: {
                 default: "user",
             },
+            plan: {
+                defaultValue: "free",
+            }
         }
     }
 });

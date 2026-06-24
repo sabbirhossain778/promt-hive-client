@@ -1,9 +1,14 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import { User, Copy, Star, Eye, Sparkles, Lock } from "lucide-react";
 import Link from 'next/link';
+import { getReviewsByPromptId } from '@/lib/api/reviews';
+import Image from 'next/image';
+import { ImageOff } from 'lucide-react';
 
 export default function PromptCard({ prompt }) {
-    
+
     const {
         _id: promptId,
         promptTitle: title = "Untitled Prompt",
@@ -12,16 +17,38 @@ export default function PromptCard({ prompt }) {
         aiTool = "UNKNOWN",
         difficulty = "BEGINNER",
         creatorName = "Creator",
-        copyCount: copies = 0,
-        rating = 0.0,
+        copies = 0,
+        rating = 0,
         isPremium = false,
         thumbnailUrl: imageUrl = "https://placehold.co/600x400/121626/a78bfa?text=No+Image"
     } = prompt;
-    
+
+    const [imgError, setImgError] = useState(false);
+    const [dynamicRating, setDynamicRating] = useState(rating ? Number(rating).toFixed(1) : "0.0");
+
+    useEffect(() => {
+        const fetchRating = async () => {
+            try {
+                if (!promptId) return;
+                const reviews = await getReviewsByPromptId(promptId);
+
+                if (reviews && reviews.length > 0) {
+                    const totalReviews = reviews.length;
+                    const avg = (reviews.reduce((acc, curr) => acc + curr.rating, 0) / totalReviews).toFixed(1);
+                    setDynamicRating(avg);
+                }
+            } catch (error) {
+                console.error("Failed to fetch rating for card:", error);
+            }
+        };
+
+        fetchRating();
+    }, [promptId]);
+
     const displayAiTool = aiTool.toUpperCase();
     const displayDifficulty = difficulty.toUpperCase();
 
-    let toolColors = "bg-[#1c1c21] text-zinc-400 border-zinc-800"; 
+    let toolColors = "bg-[#1c1c21] text-zinc-400 border-zinc-800";
     if (displayAiTool.includes("CHATGPT")) toolColors = "bg-[#2d1b4e]/50 text-[#c084fc] border-[#581c87]/50";
     else if (displayAiTool.includes("GEMINI")) toolColors = "bg-[#164e63]/50 text-[#22d3ee] border-[#0891b2]/50";
     else if (displayAiTool.includes("CLAUDE")) toolColors = "bg-[#422006]/50 text-[#facc15] border-[#854d0e]/50";
@@ -29,18 +56,24 @@ export default function PromptCard({ prompt }) {
 
     return (
         <div className="bg-[#0B1120] border border-zinc-800/80 rounded-2xl p-4 hover:border-zinc-700 transition-all group flex flex-col h-full">
-            
+
             {/* Thumbnail */}
             <div className="w-full h-44 rounded-xl overflow-hidden mb-4 relative bg-[#121626]">
-                 <img 
-                    src={imageUrl} 
-                    alt={title} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-
-                    onError={(e) => {
-                        e.target.src = "https://placehold.co/600x400/121626/a78bfa?text=Image+Not+Found";
-                    }}
-                />
+                {imgError ? (
+                    <div className="w-full h-full flex flex-col items-center justify-center text-zinc-600 bg-[#121626]">
+                        <ImageOff size={32} className="mb-2 opacity-50" />
+                        <span className="text-xs font-medium">No Image</span>
+                    </div>
+                ) : (
+                    <Image
+                        src={imageUrl}
+                        alt={title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        onError={() => setImgError(true)}
+                    />
+                )}
             </div>
 
             {/* Badges (AI Tool, Difficulty, Premium) */}
@@ -76,18 +109,26 @@ export default function PromptCard({ prompt }) {
 
             {/* Footer Info (Creator, Copies, Rating) */}
             <div className="flex items-center justify-between mt-auto pt-4 border-t border-zinc-800/60 mb-5">
+                {/* Creator Section */}
                 <div className="flex items-center gap-2 text-zinc-400">
                     <User size={14} />
-                    <span className="text-xs font-medium line-clamp-1 max-w-[120px]">{creatorName}</span>
+                    <span className="text-xs font-medium line-clamp-1 max-w-[100px]">{creatorName || "Anonymous"}</span>
                 </div>
+
+                {/* Dynamic Stats Section */}
                 <div className="flex items-center gap-4">
+                    {/* Copies */}
                     <div className="flex items-center gap-1.5 text-zinc-400">
                         <Copy size={14} />
                         <span className="text-xs font-medium">{copies}</span>
                     </div>
-                    <div className="flex items-center gap-1 text-zinc-400">
-                        <Star size={14} className="fill-[#fbbf24] text-[#fbbf24]" />
-                        <span className="text-xs font-medium">{Number(rating).toFixed(1)}</span>
+
+                    {/* Community Rating */}
+                    <div className="flex items-center gap-1 text-amber-400">
+                        <Star size={14} className="fill-amber-400 text-amber-400" />
+                        <span className="text-xs font-bold text-zinc-300">
+                            {dynamicRating}
+                        </span>
                     </div>
                 </div>
             </div>

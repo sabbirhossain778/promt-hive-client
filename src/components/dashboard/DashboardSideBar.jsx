@@ -10,22 +10,55 @@ import {
     PlusCircle,
     Settings,
     LogOut,
-    Menu
+    Menu,
+    Bookmark, Star, User, Users, CheckCircle
 } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import Image from "next/image";
 
 export function DashboardSideBar() {
     const pathname = usePathname();
-    const { data: session } = useSession();
+    const { data: session, isPending } = useSession();
     const user = session?.user;
+    const role = user?.role || "user";
 
-    const navItems = [
+    // 1. User Nav Items
+    const userNavItems = [
+        { icon: User, href: "/dashboard/user/profile", label: "Profile" },
+        { icon: Sparkles, href: "/dashboard/user/my-prompts", label: "My Prompts" },
+        { icon: PlusCircle, href: "/dashboard/user/add-prompt", label: "Add Prompt" },
+        { icon: Bookmark, href: "/dashboard/user/saved-prompts", label: "Saved Prompts" },
+        { icon: Star, href: "/dashboard/user/my-reviews", label: "My Reviews" }
+    ];
+
+    // 2. Creator Nav Items
+    const creatorNavItems = [
         { icon: LayoutDashboard, href: "/dashboard/creator", label: "Dashboard" },
-        { icon: Sparkles, href: "/dashboard/creator/my-prompts", label: "My Prompts" },
         { icon: PlusCircle, href: "/dashboard/creator/add-prompt", label: "Add Prompt" },
+        { icon: Sparkles, href: "/dashboard/creator/my-prompts", label: "My Prompts" },
+        { icon: Bookmark, href: "/dashboard/creator/saved-prompts", label: "Saved Prompts" },
+        { icon: User, href: "/dashboard/creator/profile", label: "Profile" },
         { icon: Settings, href: "/dashboard/creator/settings", label: "Settings" },
     ];
+
+    // 3. Admin Nav Items
+    const adminNavItems = [
+        { icon: LayoutDashboard, href: "/dashboard/admin", label: "Admin Dashboard" },
+        { icon: CheckCircle, href: "/dashboard/admin/approve-prompts", label: "Approve Prompts" },
+        { icon: Users, href: "/dashboard/admin/manage-users", label: "Manage Users" },
+        { icon: Settings, href: "/dashboard/admin/settings", label: "Settings" },
+    ];
+
+    let navItems = userNavItems;
+    if (role === "admin") {
+        navItems = adminNavItems;
+    } else if (role === "creator") {
+        navItems = creatorNavItems;
+    }
+
+    if (isPending) {
+        return <div className="p-4 text-white">Loading sidebar...</div>;
+    }
 
     const navContent = (
         <div className="flex flex-col h-full justify-between pb-4">

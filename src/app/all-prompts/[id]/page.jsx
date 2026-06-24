@@ -39,7 +39,7 @@ const PromptDetailsPage = async ({ params }) => {
     } = prompt || {};
 
     // Check if the prompt is locked for the current user
-    const isLocked = visibility === 'Private' && !user?.isPremium;
+    const isLocked = visibility === 'private' && !user?.isPremium;
 
     return (
         <div className="min-h-screen bg-[#050B14] text-zinc-200 p-4 md:p-8 relative overflow-hidden">
@@ -94,8 +94,7 @@ const PromptDetailsPage = async ({ params }) => {
                     promptId={id}
                     isLocked={isLocked}
                     user={user}
-                    initialReviews={reviews}
-                    
+                    initialReviews={reviews}                  
                 />
             </div>
         </div>
