@@ -24,3 +24,12 @@ export const getCreatorPrompts = async (creatorId, status = 'all') => {
     return data;
 }
 
+export const getUserPromptCount = async (creatorId) => {
+    try {
+        const data = await serverFetch(`/api/prompts/count/${creatorId}`);
+        return data?.count || 0;
+    } catch (error) {
+        console.error("Error fetching user prompt count:", error);
+        return 0;
+    }
+};

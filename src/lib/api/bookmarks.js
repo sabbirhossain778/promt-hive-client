@@ -8,3 +8,9 @@ export const checkBookmarkStatus = async (promptId, userId) => {
     const data = await serverFetch(path);
     return data?.isBookmarked || false;
 };
+
+export const getSavedPromptsByUserId = async (userId) => {
+    console.log("Fetching for User ID:", userId);
+    return serverFetch(`/api/saved-prompts?savedBy=${userId}`);
+}
+

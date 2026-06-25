@@ -4,9 +4,13 @@ import { revalidatePath } from "next/cache"
 
 const { serverMutation } = require("../core/server")
 
-export const toggleBookmark = async (data) => {
-    return serverMutation('/api/bookmarks/toggle', data)
-}
+export const toggleBookmark = async ({ promptId, userId }) => {
+    return serverMutation('/api/bookmarks/toggle', { promptId, userId });
+};
+
+export const removeBookmark = async ({ promptId, userId }) => {
+    return serverMutation('/api/bookmarks/toggle', { promptId, userId });
+};
 
 export const submitReport = async (data) => {
     return serverMutation('/api/reports', data)
@@ -17,3 +21,4 @@ export const incrementCopyCount = async (promptId) => {
     revalidatePath(`/all-prompts/${promptId}`);
     return result;
 }
+

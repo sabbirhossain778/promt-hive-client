@@ -5,17 +5,16 @@ import {
     Mail, User as UserIcon, ShieldCheck, FileText, 
     CheckCircle, Sparkles, Crown, Gem
 } from 'lucide-react';
-// যদি প্রোফাইল পিকচারের জন্য Next Image ব্যবহার করেন
 import Image from 'next/image'; 
 
 const UserProfilePage = async () => {
-    // সেশন থেকে ইউজারের ডেটা নেওয়া
+
     const user = await getUserSession();
     
-    // ডামি বা রিয়েল ডেটা (আপনার ব্যাকএন্ড থেকে এগুলো ফেচ করে নিতে পারবেন)
-    const isPro = user?.plan === 'pro'; // 'free' অথবা 'pro'
+
+    const isPro = user?.plan === 'pro';
     const role = user?.role?.toUpperCase() || 'USER';
-    const promptsPublished = 0; // এটি পরে ডাটাবেস থেকে ডাইনামিক করে নিবেন
+    const promptsPublished = 0; 
 
     return (
         <div className="min-h-[80vh] p-4 md:p-8 max-w-5xl mx-auto">
@@ -26,7 +25,7 @@ const UserProfilePage = async () => {
                 {/* Background Glow Effect */}
                 <div className="absolute -top-24 -left-24 w-64 h-64 bg-violet-600/20 rounded-full blur-[80px] pointer-events-none"></div>
 
-                {/* --- 1. TOP SECTION: Profile Header --- */}
+                {/* 1. TOP SECTION: Profile Header  */}
                 <div className="flex flex-col md:flex-row items-center md:items-start gap-6 relative z-10">
                     
                     {/* Glowing Avatar */}
@@ -71,7 +70,7 @@ const UserProfilePage = async () => {
                     </div>
                 </div>
 
-                {/* --- 2. ATTRACTIVE HR / DIVIDER --- */}
+                {/* 2. ATTRACTIVE HR / DIVIDER */}
                 <div className="relative w-full h-px my-10 flex items-center justify-center">
                     {/* Main gradient line */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
@@ -79,7 +78,7 @@ const UserProfilePage = async () => {
                     <div className="absolute w-48 h-2 bg-violet-500/20 blur-xl"></div>
                 </div>
 
-                {/* --- 3. MIDDLE SECTION: Stats Grid --- */}
+                {/* 3. MIDDLE SECTION: Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
                     
                     {/* Card 1: Prompts Published */}
@@ -111,10 +110,9 @@ const UserProfilePage = async () => {
                     </div>
                 </div>
 
-                {/* --- 4. BOTTOM SECTION: Premium Banner / Upgrade Action --- */}
+                {/* Premium Banner */}
                 <div className="mt-8 relative z-10">
                     {isPro ? (
-                        /* Success Banner for PRO users */
                         <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-5 flex items-center gap-3">
                             <CheckCircle className="text-emerald-400 flex-shrink-0" size={22} />
                             <span className="text-emerald-200/90 text-sm md:text-base font-medium">
