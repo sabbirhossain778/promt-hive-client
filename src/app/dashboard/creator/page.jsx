@@ -26,8 +26,8 @@ const CreatorHomePage = async () => {
 
             {/* Charts Section */}
             <div className="flex flex-col gap-8 w-full mt-4">
-                <PromptStatsChart />
-                <AccumulativeGrowthChart />
+                <PromptStatsChart creatorId={user.id} />
+                <AccumulativeGrowthChart creatorId={user.id} />
             </div>
 
         </div>

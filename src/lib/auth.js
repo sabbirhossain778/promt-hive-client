@@ -18,7 +18,7 @@ export const auth = betterAuth({
                 default: "user",
             },
             plan: {
-                defaultValue: "free",
+                defaultValue: "user_free",
             }
         }
     }
