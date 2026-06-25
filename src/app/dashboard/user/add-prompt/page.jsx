@@ -21,7 +21,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import Image from "next/image";
 
-// আপনার API এবং Server Actions
+// Server Actions
 import { createPrompt } from "@/lib/actions/prompt";
 import { getUserPromptCount } from "@/lib/api/prompts";
 
@@ -73,7 +73,6 @@ export default function UserAddPromptPage() {
             setIsUploading(false);
         }
     };
-
 
     const handleSubmit = async (e) => {
         e.preventDefault(); 

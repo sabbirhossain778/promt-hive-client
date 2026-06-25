@@ -4,8 +4,10 @@ import Link from "next/link";
 import { Button } from "@heroui/react";
 import { Sparkles } from "lucide-react";
 import { signOut, useSession } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
+    const router = useRouter();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { data: session, isPending } = useSession();
     const user = session?.user;
@@ -13,6 +15,8 @@ export default function Navbar() {
     const handleSignOut = async () => {
         await signOut();
         setIsMenuOpen(false);
+        router.push('/');
+        router.refresh();
     };
 
     // Base navigation links

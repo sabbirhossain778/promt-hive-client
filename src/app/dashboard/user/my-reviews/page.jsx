@@ -34,13 +34,6 @@ export default function MyReviewsPage() {
         loadReviews();
     }, [user?.id]);
 
-    // তারিখ সুন্দরভাবে দেখানোর ফাংশন (যেমন: 6/16/2026)
-    const formatDate = (dateString) => {
-        if (!dateString) return "N/A";
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US'); // MM/DD/YYYY format
-    };
-
     return (
         <div className="min-h-screen bg-[#050B14] p-6 lg:p-8">
             <div className="max-w-7xl mx-auto">
@@ -122,7 +115,7 @@ export default function MyReviewsPage() {
                                             <td className="py-4 px-6">
                                                 <div className="flex items-center gap-2 text-sm text-zinc-500">
                                                     <Calendar size={14} className="text-zinc-600" />
-                                                    {formatDate(review.createdAt)}
+                                                    {review.createdAt}
                                                 </div>
                                             </td>
 
