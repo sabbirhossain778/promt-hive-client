@@ -6,7 +6,7 @@ import React from 'react';
 const AdminPromptsPage = async () => {
 
     const prompts = await fetchAdminPageAllPrompts();
-
+ 
     return (
         <div className="min-h-screen bg-[#0A0D15] p-6 md:p-10">
             <div className="max-w-7xl mx-auto space-y-6">

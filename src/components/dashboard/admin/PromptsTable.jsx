@@ -10,6 +10,7 @@ import { deletePrompt, updatePrompt } from '@/lib/actions/prompt';
 export default function PromptsTable({ initialPrompts }) {
     const [prompts, setPrompts] = useState(initialPrompts);
     const [modal, setModal] = useState({ isOpen: false, id: null });
+    const [rejectionModal, setRejectionModal] = useState({ isOpen: false, id: null, feedback: "" });
 
 
     const handleDelete = async () => {
@@ -26,21 +27,25 @@ export default function PromptsTable({ initialPrompts }) {
     };
 
 
-    const handleStatusUpdate = async (id, newStatus) => {
-        const res = await updatePrompt(id, { status: newStatus });
-        
+    const handleStatusUpdate = async (id, newStatus, feedback = "") => {
+
+        const payload = newStatus === 'rejected' ? { status: newStatus, rejectionReason: feedback } : { status: newStatus };
+
+        const res = await updatePrompt(id, payload);
+
         if (res?.result?.modifiedCount > 0 || res?.result?.acknowledged || res?.message === "Prompt updated successfully") {
-            setPrompts(prompts.map(p => p._id === id ? { ...p, status: newStatus } : p));
+            setPrompts(prompts.map(p => p._id === id ? { ...p, ...payload } : p));
             toast.success(`Prompt ${newStatus}!`);
         } else {
-            toast.error("Action failed. Already updated?");
+            toast.error("Action failed.");
         }
+        setRejectionModal({ isOpen: false, id: null, feedback: "" });
     };
 
     const handleFeaturedToggle = async (id, currentStatus) => {
         const newFeaturedStatus = !currentStatus;
         const res = await updatePrompt(id, { featured: newFeaturedStatus });
-        
+
         if (res?.result?.modifiedCount > 0 || res?.result?.acknowledged || res?.message === "Prompt updated successfully") {
             setPrompts(prompts.map(p => p._id === id ? { ...p, featured: newFeaturedStatus } : p));
             toast.success(newFeaturedStatus ? "Prompt Featured!" : "Removed from Featured.");
@@ -53,6 +58,7 @@ export default function PromptsTable({ initialPrompts }) {
         <div className="bg-[#111622] border border-[#1F2937] rounded-2xl overflow-hidden shadow-2xl w-full relative">
             <ToastContainer theme="dark" position="top-center" autoClose={3000} />
 
+            {/* delete modal */}
             {modal.isOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
                     <div className="bg-[#151B29] border border-[#1F2937] w-full max-w-sm rounded-2xl p-6 shadow-2xl">
@@ -68,7 +74,33 @@ export default function PromptsTable({ initialPrompts }) {
                     </div>
                 </div>
             )}
-            
+
+            {/* rejection modal */}
+            {rejectionModal.isOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+                    <div className="bg-[#151B29] border border-[#1F2937] w-full max-w-sm rounded-2xl p-6 shadow-2xl">
+                        <h3 className="text-lg font-bold text-white mb-4">Rejection Feedback</h3>
+                        <textarea
+                            className="w-full bg-[#1A2235] text-white p-3 rounded-lg border border-zinc-700 mb-4 focus:outline-none"
+                            placeholder="Why is this prompt being rejected?"
+                            rows="3"
+                            value={rejectionModal.feedback}
+                            onChange={(e) => setRejectionModal({ ...rejectionModal, feedback: e.target.value })}
+                        />
+                        <div className="flex gap-3">
+                            <button onClick={() => setRejectionModal({ isOpen: false, id: null, feedback: "" })} className="flex-1 py-2 rounded-lg bg-zinc-800 text-white font-semibold hover:bg-zinc-700">Cancel</button>
+                            <button
+                                onClick={() => handleStatusUpdate(rejectionModal.id, 'rejected', rejectionModal.feedback)}
+                                className="flex-1 py-2 rounded-lg bg-rose-600 text-white font-semibold hover:bg-rose-700"
+                            >
+                                Confirm Reject
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* table */}
             <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse whitespace-nowrap">
                     <thead>
@@ -111,13 +143,12 @@ export default function PromptsTable({ initialPrompts }) {
 
                                 {/* Featured Button */}
                                 <td className="p-5 text-center">
-                                    <button 
+                                    <button
                                         onClick={() => handleFeaturedToggle(prompt._id, prompt.featured)}
-                                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
-                                            prompt.featured 
-                                            ? 'bg-amber-500/10 text-amber-500 border-amber-500/30' 
+                                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${prompt.featured
+                                            ? 'bg-amber-500/10 text-amber-500 border-amber-500/30'
                                             : 'text-zinc-500 border-zinc-700 hover:text-zinc-300 hover:border-zinc-500'
-                                        }`}
+                                            }`}
                                     >
                                         <Star className={`w-3.5 h-3.5 ${prompt.featured ? 'fill-amber-500' : ''}`} />
                                         Feature
@@ -126,11 +157,10 @@ export default function PromptsTable({ initialPrompts }) {
 
                                 {/* Status Badge */}
                                 <td className="p-5 text-center">
-                                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase border ${
-                                        prompt.status === 'approved' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
+                                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase border ${prompt.status === 'approved' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
                                         prompt.status === 'rejected' ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' :
-                                        'bg-amber-500/10 text-amber-500 border-amber-500/20'
-                                    }`}>
+                                            'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                                        }`}>
                                         {prompt.status || 'PENDING'}
                                     </span>
                                 </td>
@@ -138,32 +168,32 @@ export default function PromptsTable({ initialPrompts }) {
                                 {/* Actions */}
                                 <td className="p-5">
                                     <div className="flex items-center justify-center gap-2">
-                                        
+
                                         {/* Eye Icon - Link to Details Page */}
-                                        <Link 
-                                            href={`/all-prompts/${prompt._id}`} 
-                                            title="View Details" 
+                                        <Link
+                                            href={`/all-prompts/${prompt._id}`}
+                                            title="View Details"
                                             className="p-1.5 text-zinc-400 border border-zinc-700 rounded-lg hover:bg-zinc-800 hover:text-white transition-all flex items-center justify-center"
                                         >
                                             <Eye className="w-4 h-4" />
                                         </Link>
 
-                                        <button 
-                                            title="Approve" 
+                                        <button
+                                            title="Approve"
                                             onClick={() => handleStatusUpdate(prompt._id, 'approved')}
                                             className="p-1.5 text-emerald-500 border border-zinc-700 rounded-lg hover:bg-emerald-500/10 hover:border-emerald-500/30 transition-all"
                                         >
                                             <Check className="w-4 h-4" />
                                         </button>
-                                        <button 
-                                            title="Reject" 
-                                            onClick={() => handleStatusUpdate(prompt._id, 'rejected')}
+                                        <button
+                                            title="Reject"
+                                            onClick={() => setRejectionModal({ isOpen: true, id: prompt._id, feedback: "" })}
                                             className="p-1.5 text-rose-500 border border-zinc-700 rounded-lg hover:bg-rose-500/10 hover:border-rose-500/30 transition-all"
                                         >
                                             <X className="w-4 h-4" />
                                         </button>
-                                        <button 
-                                            title="Delete" 
+                                        <button
+                                            title="Delete"
                                             onClick={() => setModal({ isOpen: true, id: prompt._id })}
                                             className="p-1.5 text-rose-500/70 border border-zinc-700 rounded-lg hover:bg-rose-500 hover:text-white transition-all"
                                         >

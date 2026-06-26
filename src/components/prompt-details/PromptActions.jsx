@@ -2,10 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { Bookmark, Flag, X } from 'lucide-react';
 import { toast } from 'react-toastify';
-
-// ইমপোর্টগুলো আপনার স্ট্রাকচার অনুযায়ী
-import { checkBookmarkStatus } from '@/lib/api/bookmarks'; 
-import { submitReport, toggleBookmark } from '@/lib/actions/bookmark';
+import { checkBookmarkStatus } from '@/lib/api/bookmarks';
+import { toggleBookmark } from '@/lib/actions/bookmark';
+import { submitReport } from '@/lib/actions/report';
 
 export default function PromptActions({ promptId, userId }) {
     const [isBookmarked, setIsBookmarked] = useState(false);
@@ -27,9 +26,9 @@ export default function PromptActions({ promptId, userId }) {
     // Bookmark ---- Server Action
     const handleBookmark = async () => {
         if (!userId) return toast.error("Please login to bookmark!");
-        
+
         const previousState = isBookmarked;
-        setIsBookmarked(!isBookmarked); 
+        setIsBookmarked(!isBookmarked);
 
         try {
             const result = await toggleBookmark({ promptId, userId });
@@ -45,14 +44,16 @@ export default function PromptActions({ promptId, userId }) {
     const handleReportSubmit = async (e) => {
         e.preventDefault();
         if (!reportReason) return toast.error("Please select a reason.");
-        
+
         try {
-            await submitReport({ 
-                promptId, 
-                reporterId: userId, 
-                reason: reportReason, 
-                description: reportDescription 
-            });
+            const payload = {
+                promptId,
+                reporterId: userId,
+                reason: reportReason,
+                description: reportDescription
+            };
+            console.log("Submitting:", payload);
+            await submitReport(payload)
             toast.success('Prompt reported successfully.');
             setIsReportModalOpen(false);
             setReportReason("");
@@ -65,13 +66,13 @@ export default function PromptActions({ promptId, userId }) {
     return (
         <>
             <div className="flex items-center gap-3 shrink-0">
-                <button 
+                <button
                     onClick={handleBookmark}
                     className={`p-3 rounded-xl border transition-all duration-300 transform hover:-translate-y-1 ${isBookmarked ? 'bg-[#8B5CF6]/10 border-[#8B5CF6] text-[#8B5CF6] shadow-[0_0_15px_rgba(139,92,246,0.2)]' : 'bg-[#0c101c] border-zinc-800/80 text-zinc-400 hover:text-[#8B5CF6] hover:border-[#8B5CF6]/50'}`}
                 >
                     <Bookmark size={20} className={isBookmarked ? "fill-current" : ""} />
                 </button>
-                <button 
+                <button
                     onClick={() => setIsReportModalOpen(true)}
                     className="p-3 rounded-xl bg-[#0c101c] border border-zinc-800/80 text-zinc-400 hover:text-red-500 hover:border-red-500/50 hover:shadow-[0_0_15px_rgba(239,68,68,0.2)] transition-all duration-300 transform hover:-translate-y-1"
                 >
@@ -92,8 +93,8 @@ export default function PromptActions({ promptId, userId }) {
                         <form onSubmit={handleReportSubmit} className="p-6 space-y-4">
                             <div>
                                 <label className="text-sm font-medium text-zinc-400 block mb-2">Reason for reporting</label>
-                                <select 
-                                    value={reportReason} 
+                                <select
+                                    value={reportReason}
                                     onChange={(e) => setReportReason(e.target.value)}
                                     className="w-full bg-[#05080f] border border-zinc-800 rounded-xl p-3 text-sm text-zinc-200 focus:outline-none focus:border-red-500"
                                 >
