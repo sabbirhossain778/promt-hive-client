@@ -11,7 +11,11 @@ import {
     Settings,
     LogOut,
     Menu,
-    Bookmark, Star, User, Users, CheckCircle
+    Bookmark, Star, User, Users, CheckCircle,
+    BarChart3,
+    BookOpen,
+    CreditCard,
+    ShieldAlert
 } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import Image from "next/image";
@@ -43,10 +47,12 @@ export function DashboardSideBar() {
 
     // 3. Admin Nav Items
     const adminNavItems = [
-        { icon: LayoutDashboard, href: "/dashboard/admin", label: "Admin Dashboard" },
-        { icon: CheckCircle, href: "/dashboard/admin/approve-prompts", label: "Approve Prompts" },
-        { icon: Users, href: "/dashboard/admin/manage-users", label: "Manage Users" },
-        { icon: Settings, href: "/dashboard/admin/settings", label: "Settings" },
+        { icon: User, href: "/dashboard/admin/profile", label: "My Profile" },
+        { icon: BarChart3, href: "/dashboard/admin", label: "Admin Analytics" },
+        { icon: Users, href: "/dashboard/admin/all-users", label: "All Users" },
+        { icon: BookOpen, href: "/dashboard/admin/all-prompts", label: "All Prompts" },
+        { icon: CreditCard, href: "/dashboard/admin/all-payments", label: "All Payments" },
+        { icon: ShieldAlert, href: "/dashboard/admin/reported-prompts", label: "Reported Prompts" },
     ];
 
     let navItems = userNavItems;

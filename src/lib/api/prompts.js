@@ -45,3 +45,10 @@ export const getUserBookmarksCount = async (userId) => {
     const data = await serverFetch(`/api/bookmarks/count/${userId}`);
     return data?.count || 0;
 };
+
+
+// for admin page
+export const fetchAdminPageAllPrompts = async () => {
+    const data = await serverFetch(`/api/admin/all-prompts`);
+    return data;
+};

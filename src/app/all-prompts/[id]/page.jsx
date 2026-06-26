@@ -39,7 +39,8 @@ const PromptDetailsPage = async ({ params }) => {
     } = prompt || {};
 
     // Check if the prompt is locked for the current user
-    const isLocked = visibility === 'private' && !user?.isPremium;
+    const isAdmin = user?.role === 'admin';
+    const isLocked = visibility === 'private' && !user?.isPremium && !isAdmin;
 
     return (
         <div className="min-h-screen bg-[#050B14] text-zinc-200 p-4 md:p-8 relative overflow-hidden">

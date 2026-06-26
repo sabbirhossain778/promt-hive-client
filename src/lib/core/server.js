@@ -9,16 +9,31 @@ export const serverFetch = async (path) => {
     return res.json();
 }
 
+// export const serverMutation = async (path, data, method = 'POST') => {
+//     const res = await fetch(`${baseUrl}${path}`, {
+//         method: method,
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(data),
+//     });
+
+//     // handle 401, 404, 403
+
+//     return res.json();
+// }
+
 export const serverMutation = async (path, data, method = 'POST') => {
-    const res = await fetch(`${baseUrl}${path}`, {
-        method: method,
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    });
+    const config = {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+    };
 
-    // handle 401, 404, 403
+    if (data) config.body = JSON.stringify(data);
 
-    return res.json();
+    const res = await fetch(`${baseUrl}${path}`, config);
+    
+    if (!res.ok) return null;
+
+    return await res.json();
 }

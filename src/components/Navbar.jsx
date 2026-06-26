@@ -32,7 +32,7 @@ export default function Navbar() {
     ];
 
     // Add Dashboard dynamically if user is logged in
-    if (user) {
+    if (user?.email) {
         const userRole = user?.role || "user";
         navLinks.push({
             label: "Dashboard",
