@@ -1,22 +1,31 @@
 "use client";
 
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Eye, Check, X, Trash2, Star, AlertTriangle } from 'lucide-react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { deletePrompt, updatePrompt } from '@/lib/actions/prompt';
+import { useRouter } from 'next/navigation';
 
-export default function PromptsTable({ initialPrompts }) {
+export default function PromptsTable({ initialPrompts, totalPages, currentPage }) {
+    const router = useRouter();
     const [prompts, setPrompts] = useState(initialPrompts);
     const [modal, setModal] = useState({ isOpen: false, id: null });
     const [rejectionModal, setRejectionModal] = useState({ isOpen: false, id: null, feedback: "" });
 
 
+    useEffect(() => {
+        setPrompts(initialPrompts);
+    }, [initialPrompts]);
+
+    const handlePageChange = (newPage) => {
+        router.push(`?page=${newPage}`);
+    };
+
     const handleDelete = async () => {
         const id = modal.id;
         const res = await deletePrompt(id);
-
         if (res?.message === "Prompt deleted successfully") {
             setPrompts(prompts.filter(p => p._id !== id));
             toast.success("Prompt deleted!");
@@ -26,13 +35,9 @@ export default function PromptsTable({ initialPrompts }) {
         setModal({ isOpen: false, id: null });
     };
 
-
     const handleStatusUpdate = async (id, newStatus, feedback = "") => {
-
         const payload = newStatus === 'rejected' ? { status: newStatus, rejectionReason: feedback } : { status: newStatus };
-
         const res = await updatePrompt(id, payload);
-
         if (res?.result?.modifiedCount > 0 || res?.result?.acknowledged || res?.message === "Prompt updated successfully") {
             setPrompts(prompts.map(p => p._id === id ? { ...p, ...payload } : p));
             toast.success(`Prompt ${newStatus}!`);
@@ -45,7 +50,6 @@ export default function PromptsTable({ initialPrompts }) {
     const handleFeaturedToggle = async (id, currentStatus) => {
         const newFeaturedStatus = !currentStatus;
         const res = await updatePrompt(id, { featured: newFeaturedStatus });
-
         if (res?.result?.modifiedCount > 0 || res?.result?.acknowledged || res?.message === "Prompt updated successfully") {
             setPrompts(prompts.map(p => p._id === id ? { ...p, featured: newFeaturedStatus } : p));
             toast.success(newFeaturedStatus ? "Prompt Featured!" : "Removed from Featured.");
@@ -205,6 +209,23 @@ export default function PromptsTable({ initialPrompts }) {
                         ))}
                     </tbody>
                 </table>
+            </div>
+
+            {/* Pagination */}
+            <div className="flex items-center justify-between p-5 border-t border-[#1F2937]">
+                <button
+                    disabled={currentPage <= 1}
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    className="px-4 py-2 bg-[#151B29] border border-[#1F2937] text-white rounded-lg hover:bg-[#1f2638] disabled:opacity-30 disabled:cursor-not-allowed"
+                >Previous</button>
+                
+                <span className="text-sm text-zinc-400">Page {currentPage} of {totalPages}</span>
+                
+                <button
+                    disabled={currentPage >= totalPages}
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    className="px-4 py-2 bg-[#151B29] border border-[#1F2937] text-white rounded-lg hover:bg-[#1f2638] disabled:opacity-30 disabled:cursor-not-allowed"
+                >Next</button>
             </div>
         </div>
     );

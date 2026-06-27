@@ -1,11 +1,15 @@
 import React from 'react';
-import { fetchAllUsers } from '@/lib/api/users';
+import { fetchAllUsers, getUsersList } from '@/lib/api/users';
 import UsersTable from '@/components/dashboard/admin/UsersTable';
 
 
 export default async function AllUsersPage() {
 
-    const users = await fetchAllUsers();
+    // const users = await fetchAllUsers();
+    const data = await getUsersList();
+    const users = data.users;
+    // console.log("Users Data:", users);
+
 
     return (
         <div className="min-h-screen bg-[#0A0D15] p-6 md:p-10 font-sans selection:bg-purple-500/30">

@@ -1,6 +1,6 @@
 'use server';
 
-import { serverFetch } from "../core/server";
+import { protectedFetch, serverFetch } from "../core/server";
 
 export const getAllPrompts = async (params = {}) => {
     const query = new URLSearchParams(params).toString();
@@ -20,7 +20,7 @@ export const getFeaturedPrompts = async () => {
 export const getCreatorPrompts = async (creatorId, status = 'all') => {
 
     const path = `/api/prompts?creatorId=${creatorId}&status=${status}`;
-    const data = await serverFetch(path);
+    const data = await protectedFetch(path);
     return data;
 }
 
@@ -48,7 +48,7 @@ export const getUserBookmarksCount = async (userId) => {
 
 
 // for admin page
-export const fetchAdminPageAllPrompts = async () => {
-    const data = await serverFetch(`/api/admin/all-prompts`);
-    return data;
+export const fetchAdminPageAllPrompts = async (page = 1) => {
+    // const data = await protectedFetch(`/api/admin/all-prompts?page=${page}`);
+    return protectedFetch(`/api/admin/all-prompts?page=${page}`);
 };

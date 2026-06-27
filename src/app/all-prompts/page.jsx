@@ -6,6 +6,7 @@ import { Search, SlidersHorizontal } from "lucide-react";
 import { ChevronDown, ChevronUp } from '@gravity-ui/icons';
 import PromptCard from '@/components/PromptCard';
 import { getAllPrompts } from '@/lib/api/prompts';
+import { serverFetch } from '@/lib/core/server';
 
 
 const FILTER_OPTIONS = {
@@ -21,6 +22,7 @@ export default function AllPromptsPage() {
 
     const [prompts, setPrompts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [totalPages, setTotalPages] = useState(1);
 
     const [openFilters, setOpenFilters] = useState({
         aiEngine: true,
@@ -28,23 +30,33 @@ export default function AllPromptsPage() {
         difficulty: false
     });
 
+    // AllPromptsPage.jsx
+    const currentPage = parseInt(searchParams.get('page')) || 1;
+
     useEffect(() => {
         const fetchPrompts = async () => {
             setIsLoading(true);
             try {
-                const params = Object.fromEntries(searchParams.entries());
-                const data = await getAllPrompts(params);
-                console.log('All Prompts from API:', data);
-                setPrompts(data);
+                const params = new URLSearchParams(searchParams.toString());
+                params.set('page', currentPage);
+                params.set('limit', 9);
+
+                const data = await getAllPrompts(params.toString());
+                setPrompts(data.prompts);
+                setTotalPages(data.totalPages);
             } catch (error) {
-                console.error("Failed to fetch prompts", error);
+                console.error("Failed", error);
             } finally {
                 setIsLoading(false);
             }
         };
-
         fetchPrompts();
-    }, [searchParams]);
+    }, [searchParams, currentPage]);
+
+
+    const handlePageChange = (newPage) => {
+        updateQueryParams('page', newPage);
+    };
 
     const currentSearch = searchParams.get('search') || "";
     const currentSort = searchParams.get('sort') || "Latest";
@@ -223,11 +235,39 @@ export default function AllPromptsPage() {
 
                     {/* Prompt Card! */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                        {prompts.map((prompt) => (
-                            <PromptCard key={prompt._id} prompt={prompt} />
-                        ))}
+                        {prompts && prompts.length > 0 ? (
+                            prompts.map((prompt) => (
+                                <PromptCard key={prompt._id} prompt={prompt} />
+                            ))
+                        ) : (
+                            <p>No prompts found.</p>
+                        )}
                     </div>
 
+                    {/* Pagination Controls */}
+                    {totalPages > 1 && (
+                        <div className="flex items-center justify-center gap-4 mt-8 py-4">
+                            <button
+                                disabled={currentPage === 1}
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                className="px-4 py-2 bg-[#0B1120] border border-zinc-800 text-zinc-400 rounded-xl hover:text-white disabled:opacity-50 transition-all"
+                            >
+                                Previous
+                            </button>
+
+                            <span className="text-zinc-500 text-sm">
+                                Page {currentPage} of {totalPages}
+                            </span>
+
+                            <button
+                                disabled={currentPage >= totalPages}
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                className="px-4 py-2 bg-[#0B1120] border border-zinc-800 text-zinc-400 rounded-xl hover:text-white disabled:opacity-50 transition-all"
+                            >
+                                Next
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
