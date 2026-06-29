@@ -6,8 +6,20 @@ import Link from 'next/link';
 import { getReviewsByPromptId } from '@/lib/api/reviews';
 import Image from 'next/image';
 import { ImageOff } from 'lucide-react';
+import { useSession } from '@/lib/auth-client';
+import { useRouter } from 'next/navigation';
 
 export default function PromptCard({ prompt }) {
+
+    const { data: session } = useSession();
+    const router = useRouter();
+
+    const handleViewDetails = (e) => {
+        if (!session) {
+            e.preventDefault();
+            router.push('/auth/signin');
+        }
+    };
 
     const {
         _id: promptId,
@@ -134,7 +146,9 @@ export default function PromptCard({ prompt }) {
             </div>
 
             {/* Action Button */}
-            <Link href={`/all-prompts/${promptId}`} className="w-full flex items-center justify-center gap-2 bg-[#8B5CF6] text-white font-semibold hover:bg-[#7C3AED] transition-colors rounded-xl py-3 text-sm">
+            <Link href={`/all-prompts/${promptId}`}
+            onClick={handleViewDetails} 
+            className="w-full flex items-center justify-center gap-2 bg-[#8B5CF6] text-white font-semibold hover:bg-[#7C3AED] transition-colors rounded-xl py-3 text-sm">
                 <Eye size={16} />
                 View Details
             </Link>
