@@ -13,7 +13,7 @@ const PromptDetailsPage = async ({ params }) => {
     const user = await getUserSession();
     const reviews = await getReviewsByPromptId(id);
 
-    const totalReviews = reviews.length;
+    const totalReviews = reviews?.length;
     const averageRating = totalReviews > 0
         ? (reviews.reduce((acc, curr) => acc + curr.rating, 0) / totalReviews).toFixed(1)
         : 0;
@@ -72,7 +72,7 @@ const PromptDetailsPage = async ({ params }) => {
                         <PromptContentBlock
                             content={promptContent}
                             aiTool={aiTool}
-                            initialCopies={prompt.copies}
+                            initialCopies={prompt?.copies}
                             isLocked={isLocked}
                             promptId={id}
                         />

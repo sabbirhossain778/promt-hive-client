@@ -1,12 +1,11 @@
-'use server'
 
-const { serverFetch } = require("../core/server");
+import { protectedFetch, serverFetch } from "../core/server";
 
 export const getReviewsByPromptId = async (promptId) => {
     if (!promptId) return [];
-    return serverFetch(`/api/reviews/${promptId}`);
+    return protectedFetch(`/api/reviews/${promptId}`);
 };
 
 export const getUserReviews = async (userId) => {
-    return serverFetch(`/api/reviews/user/${userId}`);
+    return protectedFetch(`/api/reviews/user/${userId}`);
 };

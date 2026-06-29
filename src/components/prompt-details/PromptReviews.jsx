@@ -45,7 +45,7 @@ export default function PromptReviews({ promptId, isLocked, user, initialReviews
 
     return (
         <div className="pt-8 border-t border-zinc-800/50">
-            <h2 className="text-2xl font-bold text-white mb-6">Community Reviews ({reviews.length})</h2>
+            <h2 className="text-2xl font-bold text-white mb-6">Community Reviews ({reviews?.length})</h2>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
@@ -101,7 +101,7 @@ export default function PromptReviews({ promptId, isLocked, user, initialReviews
 
                 {/* Reviews List */}
                 <div className="space-y-4 max-h-[500px] overflow-y-auto">
-                    {reviews.length > 0 ? (
+                    {reviews?.length > 0 ? (
                         reviews.map((review) => (
                             <div key={review._id} className="bg-[#0B1120] border border-zinc-800 rounded-xl p-4">
 

@@ -5,7 +5,8 @@ import {
     Table,
     Chip,
     Button,
-    Tooltip
+    Tooltip,
+    Pagination
 } from "@heroui/react";
 import {
     Eye, Edit2, Trash2, Lock, Clock, XCircle, CheckCircle, Star, PlusCircle, Inbox, AlertTriangle, X, BarChart3, Copy, TrendingUp
@@ -116,7 +117,7 @@ export default function CreatorMyPromptsPage() {
                             You haven't created any prompts yet. Start sharing your AI expertise with the marketplace!
                         </p>
 
-                        <Link href="/dashboard/user/add-prompt">
+                        <Link href="/dashboard/creator/add-prompt">
                             <Button
                                 className="bg-[#8B5CF6] text-white font-semibold hover:bg-[#7C3AED] transition-all shadow-[0_0_20px_rgba(139,92,246,0.3)] rounded-xl px-8 py-6 text-base"
                                 startContent={<PlusCircle size={20} />}

@@ -31,7 +31,21 @@ export default function SignUpPage() {
     const toggleVisibility = () => setIsVisible(!isVisible);
 
     const handleGoogleSignIn = async () => {
-        // Implement Google sign-in logic here
+        setGoogleLoading(true);
+        try {
+            const { data, error } = await authClient.signIn.social({
+                provider: "google",
+                callbackURL: redirectTo || "/dashboard/user/profile",
+            });
+
+            if (error) {
+                toast.error(error.message || "Google sign-in failed!");
+            }
+        } catch (err) {
+            toast.error("An unexpected error occurred during Google Sign-In.");
+        } finally {
+            setGoogleLoading(false);
+        }
     };
 
     const handleSignup = async (e) => {
@@ -62,7 +76,7 @@ export default function SignUpPage() {
                 setPassword("");
                 setPhotoUrl("");
                 setRole("user");
-                
+
                 window.location.href = redirectTo || "/";
             }
         } catch (err) {

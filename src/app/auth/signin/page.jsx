@@ -10,7 +10,7 @@ import { toast } from 'react-toastify';
 export default function SignInPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const redirectTo = searchParams.get('redirect') || '/' ;
+    const redirectTo = searchParams.get('redirect') || '/';
 
 
     const [email, setEmail] = useState("");
@@ -21,9 +21,23 @@ export default function SignInPage() {
 
     const toggleVisibility = () => setIsVisible(!isVisible);
 
+    // social login function
     const handleGoogleSignIn = async () => {
-        // google sign-in logic will go here
-        console.log("Google Sign-In clicked");
+        setGoogleLoading(true);
+        try {
+            const { data, error } = await authClient.signIn.social({
+                provider: "google",
+                callbackURL: redirectTo || "/dashboard/user/profile",
+            });
+
+            if (error) {
+                toast.error(error.message || "Google sign-in failed!");
+            }
+        } catch (err) {
+            toast.error("An unexpected error occurred during Google Sign-In.");
+        } finally {
+            setGoogleLoading(false);
+        }
     };
 
     const handleSignIn = async (e) => {
@@ -50,9 +64,9 @@ export default function SignInPage() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-[#050B14] px-4 py-12 font-sans">
-            
+
             <div className="w-full max-w-md bg-[#0B1120] border border-gray-800 rounded-3xl p-8 shadow-2xl">
-                
+
                 <button onClick={() => router.back()} className="text-gray-400 hover:text-[#8B5CF6] transition-colors mb-8 w-fit flex items-center gap-2">
                     <ArrowLeft width={24} height={24} />Back
                 </button>
@@ -81,26 +95,26 @@ export default function SignInPage() {
                     <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-700/60"></div></div>
                     <div className="relative flex justify-center text-xs"><span className="bg-[#0B1120] px-4 text-gray-500 font-medium uppercase tracking-wider">Or sign in with email</span></div>
                 </div>
-                
+
                 {/* Form */}
                 <form onSubmit={handleSignIn} className="space-y-4">
                     <div className="input-wrapper">
                         <div className="pl-4 text-gray-500"><Envelope width={18} height={18} /></div>
-                        <input 
-                        type="email" 
-                        value={email} 
-                        onChange={(e) => setEmail(e.target.value)} 
-                        required placeholder="Email Address" className="w-full bg-transparent border-none outline-none text-white text-sm px-3 py-3" />
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required placeholder="Email Address" className="w-full bg-transparent border-none outline-none text-white text-sm px-3 py-3" />
                     </div>
-                    
+
                     <div className="input-wrapper">
                         <div className="pl-4 text-gray-500"><Lock width={18} height={18} /></div>
-                        <input 
-                        type={isVisible ? "text" : "password"} 
-                        value={password} 
-                        onChange={(e) => setPassword(e.target.value)} required 
-                        placeholder="Password" 
-                        className="w-full bg-transparent border-none outline-none text-white text-sm px-3 py-3" />
+                        <input
+                            type={isVisible ? "text" : "password"}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)} required
+                            placeholder="Password"
+                            className="w-full bg-transparent border-none outline-none text-white text-sm px-3 py-3" />
                         <button type="button" onClick={toggleVisibility} className="pr-4 text-gray-500 hover:text-gray-300">
                             {isVisible ? <EyeSlash width={18} height={18} /> : <Eye width={18} height={18} />}
                         </button>

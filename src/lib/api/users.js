@@ -1,10 +1,11 @@
-import { serverFetch } from "../core/server";
+
+import { protectedFetch, serverFetch } from "../core/server";
 import { headers } from "next/headers";
 import { auth } from "../auth";
 
 
 export const fetchAllUsers = async () => {
-    return serverFetch('/api/users');
+    return protectedFetch('/api/users');
 };
 
 

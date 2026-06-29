@@ -5,7 +5,10 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 
 export const authHeader = async () => {
+
     const token = await getUserToken();
+    
+
     const header = token ? {
         authorization: `Bearer ${token}`
     } : {};
@@ -17,8 +20,8 @@ export const serverFetch = async (path) => {
         cache: 'no-store'
     });
     
-    if (!res.ok) {
-        console.error(`Fetch failed for ${path}:`, res.status);
+    if (!res?.ok) {
+        // console.error(`Fetch failed for ${path}:`, res.status);
         return null; 
     }
 
@@ -29,7 +32,7 @@ export const protectedFetch = async (path) => {
     const fullUrl = `${baseUrl}${path}`;
     console.log("Requesting URL:", fullUrl);
     
-    const res = await fetch(`${baseUrl}${path}`,
+    const res = await fetch(fullUrl,
         {
             headers: await authHeader()
         }
@@ -58,7 +61,6 @@ export const serverMutation = async (path, data, method = 'POST') => {
 
     return handleStatusCode(res);
 }
-
 
 // handle 401, 404, 403
 const handleStatusCode = res => {

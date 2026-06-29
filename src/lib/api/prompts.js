@@ -1,4 +1,3 @@
-'use server';
 
 import { protectedFetch, serverFetch } from "../core/server";
 
@@ -10,7 +9,7 @@ export const getAllPrompts = async (params = {}) => {
 }
 
 export const getPromptById = async (promptId) => {
-    return serverFetch(`/api/prompts/${promptId}`)
+    return protectedFetch(`/api/prompts/${promptId}`)
 }
 
 export const getFeaturedPrompts = async () => {
@@ -19,7 +18,7 @@ export const getFeaturedPrompts = async () => {
 
 export const getCreatorPrompts = async (creatorId, status = 'all') => {
 
-    const path = `/api/prompts?creatorId=${creatorId}&status=${status}`;
+    const path = `/api/creator-prompts?creatorId=${creatorId}&status=${status}`;
     const data = await protectedFetch(path);
     return data;
 }
@@ -28,7 +27,7 @@ export const getCreatorPrompts = async (creatorId, status = 'all') => {
 
 export const getUserPromptCount = async (creatorId) => {
     try {
-        const data = await serverFetch(`/api/prompts/count/${creatorId}`);
+        const data = await protectedFetch(`/api/prompts/count/${creatorId}`);
         return data?.count || 0;
     } catch (error) {
         console.error("Error fetching user prompt count:", error);
@@ -42,13 +41,12 @@ export const getTotalCopiesCount = async (creatorId) => {
 };
 
 export const getUserBookmarksCount = async (userId) => {
-    const data = await serverFetch(`/api/bookmarks/count/${userId}`);
+    const data = await protectedFetch(`/api/bookmarks/count/${userId}`);
     return data?.count || 0;
 };
 
 
 // for admin page
 export const fetchAdminPageAllPrompts = async (page = 1) => {
-    // const data = await protectedFetch(`/api/admin/all-prompts?page=${page}`);
     return protectedFetch(`/api/admin/all-prompts?page=${page}`);
 };

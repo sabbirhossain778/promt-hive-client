@@ -5,16 +5,21 @@ import { headers } from "next/headers";
 
 export const getUserSession = async () => {
     const session = await auth.api.getSession({
-        headers: await headers() // some endpoints might require headers
+        headers: await headers()
     })
+    console.log('session', session.session.token);
     
     return session?.user || null;
 }
 
 export const getUserToken = async () => {
+
     const session = await auth.api.getSession({
         headers: await headers()
     })
+
+    // console.log("FULL SESSION");
+    // console.log(JSON.stringify(session, null, 2));
 
     return session?.session?.token || null;
 }
