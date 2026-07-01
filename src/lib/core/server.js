@@ -30,7 +30,7 @@ export const serverFetch = async (path) => {
 
 export const protectedFetch = async (path) => {
     const fullUrl = `${baseUrl}${path}`;
-    console.log("Requesting URL:", fullUrl);
+    // console.log("Requesting URL:", fullUrl);
     
     const res = await fetch(fullUrl,
         {

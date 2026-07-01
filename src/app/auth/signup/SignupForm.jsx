@@ -84,7 +84,7 @@ export default function SignupForm({ redirectTo }) {
                     </button>
 
                     <h2 className="text-2xl font-bold text-white mb-6 text-center">Create an account</h2>
-                    
+
                     {error && <div className="mb-4 p-2 text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg text-center">{error}</div>}
 
                     <button onClick={handleGoogleSignIn} disabled={googleLoading} className="google-btn w-full mb-4">
@@ -96,18 +96,47 @@ export default function SignupForm({ redirectTo }) {
                         <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="Email" className="w-full bg-[#1e293b] p-3 rounded-lg text-white" />
                         <input type={isVisible ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Password" className="w-full bg-[#1e293b] p-3 rounded-lg text-white" />
                         <input type="text" value={photoUrl} onChange={(e) => setPhotoUrl(e.target.value)} required placeholder="Photo URL" className="w-full bg-[#1e293b] p-3 rounded-lg text-white" />
-                        
-                        <RadioGroup value={role} onValueChange={setRole} orientation="horizontal" className="text-white">
-                            <Radio value="user">User</Radio>
-                            <Radio value="creator">Creator</Radio>
+
+                        <RadioGroup
+                            defaultValue="user"
+                            name="plan-uncontrolled"
+                            onChange={(nextValue) => setRole(nextValue)}
+
+                        >
+                            <Label>Select role</Label>
+                            <Radio value="user">
+                                <Radio.Content>
+                                    <Radio.Control>
+                                        <Radio.Indicator />
+                                    </Radio.Control>
+                                    User
+                                </Radio.Content>
+                     
+                            </Radio>
+                            <Radio value="creator">
+                                <Radio.Content>
+                                    <Radio.Control>
+                                        <Radio.Indicator />
+                                    </Radio.Control>
+                                    Creator
+                                </Radio.Content>
+                            </Radio>
                         </RadioGroup>
+
+
 
                         <button type="submit" disabled={isLoading} className="w-full py-3 bg-[#8B5CF6] text-white rounded-lg">
                             {isLoading ? "Creating..." : "Create Account"}
                         </button>
                     </form>
+
+                    <p className="mt-8 text-center text-sm text-gray-400">
+                        Already have an account? <Link href="/auth/signin" className="text-[#8B5CF6] font-medium hover:underline">Sign In</Link>
+                    </p>
                 </div>
             </div>
         </div>
     );
 }
+
+

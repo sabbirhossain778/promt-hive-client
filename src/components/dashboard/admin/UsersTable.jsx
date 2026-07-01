@@ -107,7 +107,7 @@ export default function UsersTable({ initialUsers }) {
                                 <td className="p-5 whitespace-nowrap">
                                     <select
                                         value={user.role}
-                                        onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                                        onChange={(e) => handleRoleChange(user._id, e.target.value)}
                                         className="bg-[#1A2235] text-zinc-300 text-xs rounded-lg px-2 py-1 outline-none cursor-pointer border border-zinc-700"
                                     >
                                         <option value="admin">Admin</option>

@@ -7,7 +7,7 @@ export const getUserSession = async () => {
     const session = await auth.api.getSession({
         headers: await headers()
     })
-    console.log('session', session.session.token);
+    // console.log('session', session.session.token);
     
     return session?.user || null;
 }
