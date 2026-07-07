@@ -3,7 +3,7 @@
 Prompt Hive is a feature-rich, full-stack AI prompt management platform designed for users to discover, share, and manage high-quality AI prompts. It provides a seamless experience for both AI prompt creators and users with role-based access control and advanced management features.
 
 ## 🚀 Live Demo
-[Insert Your Live URL Here - e.g., https://prompt-hive-client-delta.vercel.app/]
+[https://prompt-hive-client-delta.vercel.app]
 
 ## 🛠 Tech Stack
 
