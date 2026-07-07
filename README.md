@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Prompt Hive
 
-## Getting Started
+Prompt Hive is a feature-rich, full-stack AI prompt management platform designed for users to discover, share, and manage high-quality AI prompts. It provides a seamless experience for both AI prompt creators and users with role-based access control and advanced management features.
 
-First, run the development server:
+## 🚀 Live Demo
+[Insert Your Live URL Here - e.g., https://prompt-hive-client-delta.vercel.app/]
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🛠 Tech Stack
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Frontend:**
+* Next.js 15 (App Router)
+* Tailwind CSS
+* HeroUI / HeroUI Pro
+* Lucide React & Gravity UI Icons
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+**Backend & Database:**
+* Node.js & Express.js
+* MongoDB & Mongoose
+* Better-Auth (Authentication & Role Management)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Deployment:**
+* Vercel
 
-## Learn More
+## ✨ Key Features
 
-To learn more about Next.js, take a look at the following resources:
+* **Role-Based Access Control:** Distinct experiences for 'Users' and 'Creators' with secured authorization.
+* **Prompt Management:** CRUD operations for prompts with advanced filtering (AI Engine, Category, Difficulty).
+* **Social Interactions:** Users can bookmark, copy, and review prompts.
+* **Analytics Dashboard:** Creators can track their prompt performance (copies, bookmarks, ratings).
+* **Advanced Authentication:** Secure login system with Email/Password and Google Social Login support.
+* **Admin Control:** Dedicated admin panel to manage users and system content.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📦 Getting Started
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Prerequisites
+* Node.js (v18+)
+* MongoDB Database
 
-## Deploy on Vercel
+### Installation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Clone the repository:
+   ```bash
+   git clone [Your Repository URL]
