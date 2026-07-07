@@ -40,4 +40,4 @@ Prompt Hive is a feature-rich, full-stack AI prompt management platform designed
 
 1. Clone the repository:
    ```bash
-   git clone [Your Repository URL]
+   git clone [https://github.com/sabbirhossain778/promt-hive-client]
